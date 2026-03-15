@@ -48,7 +48,6 @@ class ChatMessage:
 
 
 class Admin(User):
-
     def add_vehicle(self, tenants):
         print("\n-- Add Vehicle --")
 
@@ -75,7 +74,6 @@ class Admin(User):
 
 
 class Customer(User):
-
     def view_vehicles(self, tenants):
         print("\n-- Vehicles Available --")
 
@@ -114,12 +112,10 @@ class Customer(User):
 
 
 class ChatSystem:
-
     @staticmethod
     def send_message(messages, sender, receiver):
         msg = input("Message: ")
         messages.append(ChatMessage(sender, receiver, msg))
-
 
     @staticmethod
     def view_messages(messages, user):
@@ -128,7 +124,6 @@ class ChatSystem:
         for m in messages:
             if m.receiver == user or m.sender == user:
                 print(f"{m.sender} -> {m.receiver}: {m.message}")
-
 
 admins = [Admin("A001", "admin", "admin", "09123456789", "admin")]
 customers = []
@@ -141,10 +136,10 @@ bookings = []
 messages = []
 
 
-
 tenants[0].vehicles.append(Vehicle("V001", "Toyota Vios", 1500))
 tenants[0].vehicles.append(Vehicle("V002", "Honda City", 1700))
 tenants[1].vehicles.append(Vehicle("V003", "Toyota Fortuner", 3500))
+
 
 
 while True:
