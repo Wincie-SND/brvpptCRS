@@ -127,10 +127,7 @@ class ChatSystem:
 
 admins = [Admin("A001", "admin", "admin", "09123456789", "admin")]
 customers = []
-tenants = [
-    Tenant("T001", "City Car Rentals"),
-    Tenant("T002", "Leyte Auto Hire")
-]
+tenants = []
 
 bookings = []
 messages = []
