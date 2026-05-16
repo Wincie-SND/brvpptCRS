@@ -8,9 +8,6 @@ vehicle = Vehicle()
 booking = Booking()
 
 
-# =========================
-# ADD USERS
-# =========================
 
 user.add_user(
     "Juan Dela Cruz",
@@ -27,9 +24,6 @@ user.add_user(
 )
 
 
-# =========================
-# ADD VEHICLES
-# =========================
 
 vehicle.add_vehicle(
     "Toyota",
@@ -46,25 +40,14 @@ vehicle.add_vehicle(
 )
 
 
-# =========================
-# VIEW USERS
-# =========================
-
 print("\nUSERS")
 user.view_users()
 
 
-# =========================
-# VIEW VEHICLES
-# =========================
 
 print("\nVEHICLES")
 vehicle.view_vehicles()
 
-
-# =========================
-# CREATE BOOKING
-# =========================
 
 booking.create_booking(
     1,
@@ -73,10 +56,6 @@ booking.create_booking(
     "2026-05-20"
 )
 
-
-# =========================
-# VIEW BOOKINGS
-# =========================
 
 print("\nBOOKINGS")
 booking.view_bookings()

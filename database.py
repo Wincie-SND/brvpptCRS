@@ -9,4 +9,4 @@ def connect_db():
         database="car_rental_system"
     )
 
-    return connection
+    return connection   
