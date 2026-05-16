@@ -1,11 +1,27 @@
+from database import connect_db
+
 class User:
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
 
-    def login(self):
-        print(f"{self.username} logged in")
+    def add_user(self, fullname, username, password, role):
 
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        sql = """
+        INSERT INTO users(fullname, username, password, role)
+        VALUES (%s, %s, %s, %s)
+        """
+
+        values = (fullname, username, password, role)
+
+        cursor.execute(sql, values)
+
+        conn.commit()
+
+        print("User added successfully!")
+
+        cursor.close()
+        conn.close()
 
 class Admin(User):
     def __init__(self, username, password):
