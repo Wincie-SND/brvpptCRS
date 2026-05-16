@@ -1,5 +1,5 @@
-from Users import Admin
-from Users import Tenant
+from models.users import Admin
+from models.users import Tenant
 
 def init_data():
     admins = [Admin("A001", "admin", "admin", "09123456789", "admin")]
