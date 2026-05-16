@@ -1,38 +1,82 @@
-from models.users import Admin, Tenant
-from models.vehicle_booking import Vehicle, Booking
-from systems.chat_system import ChatSystem
-from data.init_data import init_data
-
-admins, tenants, vehicles, bookings = init_data()
-
-chat_system = ChatSystem()
-
-def main_menu():
-    while True:
-        print("\n==== TERMINAL SYSTEM ====")
-        print("1. View Vehicles")
-        print("2. Chat")
-        print("3. Exit")
-
-        choice = input("Enter choice: ")
-
-        if choice == "1":
-            for vehicle in vehicles:
-                print(vehicle)
-
-        elif choice == "2":
-            sender = input("Sender: ")
-            message = input("Message: ")
-
-            chat_system.send_message(sender, message)
-            chat_system.display_messages()
-
-        elif choice == "3":
-            print("Exiting...")
-            break
-
-        else:
-            print("Invalid choice")
+from models.user import User
+from models.vehicle import Vehicle
+from models.booking import Booking
 
 
-main_menu()
+user = User()
+vehicle = Vehicle()
+booking = Booking()
+
+
+# =========================
+# ADD USERS
+# =========================
+
+user.add_user(
+    "Juan Dela Cruz",
+    "juan123",
+    "12345",
+    "tenant"
+)
+
+user.add_user(
+    "Admin User",
+    "admin",
+    "admin123",
+    "admin"
+)
+
+
+# =========================
+# ADD VEHICLES
+# =========================
+
+vehicle.add_vehicle(
+    "Toyota",
+    "Vios",
+    1500,
+    "Available"
+)
+
+vehicle.add_vehicle(
+    "Honda",
+    "Civic",
+    2500,
+    "Available"
+)
+
+
+# =========================
+# VIEW USERS
+# =========================
+
+print("\nUSERS")
+user.view_users()
+
+
+# =========================
+# VIEW VEHICLES
+# =========================
+
+print("\nVEHICLES")
+vehicle.view_vehicles()
+
+
+# =========================
+# CREATE BOOKING
+# =========================
+
+booking.create_booking(
+    1,
+    1,
+    "2026-05-16",
+    "2026-05-20"
+)
+
+
+# =========================
+# VIEW BOOKINGS
+# =========================
+
+print("\nBOOKINGS")
+booking.view_bookings()

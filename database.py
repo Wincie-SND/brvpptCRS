@@ -1,9 +1,12 @@
 import mysql.connector
 
 def connect_db():
-    return mysql.connector.connect(
+
+    connection = mysql.connector.connect(
         host="localhost",
         user="root",
         password="",
         database="car_rental_system"
     )
+
+    return connection
