@@ -1,61 +1,74 @@
-from models.user import User
-from models.vehicle import Vehicle
-from models.booking import Booking
+from flask import Flask, render_template,request,jsonify
+from database import cursor,db
+
+app=Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template("index.html")
 
 
-user = User()
-vehicle = Vehicle()
-booking = Booking()
+@app.route('/login',methods=['POST'])
+def login():
+
+    email=request.form['email']
+    password=request.form['password']
+
+    query="""
+    SELECT * FROM users
+    WHERE email=%s
+    AND password=%s
+    """
+
+    cursor.execute(query,(email,password))
+
+    user=cursor.fetchone()
+
+    if user:
+        return jsonify({
+            "message":"Login Success"
+        })
+
+    return jsonify({
+        "message":"Invalid Account"
+    })
 
 
+@app.route('/vehicles')
+def vehicles():
 
-user.add_user(
-    "Juan Dela Cruz",
-    "juan123",
-    "12345",
-    "tenant"
-)
+    cursor.execute(
+    "SELECT * FROM vehicles"
+    )
 
-user.add_user(
-    "Admin User",
-    "admin",
-    "admin123",
-    "admin"
-)
+    data=cursor.fetchall()
+
+    return jsonify(data)
 
 
+@app.route('/book',methods=['POST'])
+def booking():
 
-vehicle.add_vehicle(
-    "Toyota",
-    "Vios",
-    1500,
-    "Available"
-)
+    renter=request.form['renter']
+    vehicle=request.form['vehicle']
 
-vehicle.add_vehicle(
-    "Honda",
-    "Civic",
-    2500,
-    "Available"
-)
+    sql="""
+    INSERT INTO bookings
+    (renter_id,vehicle_id,status)
+    VALUES(%s,%s,%s)
+    """
 
+    cursor.execute(
+    sql,
+    (renter,vehicle,"Pending")
+    )
 
-print("\nUSERS")
-user.view_users()
+    db.commit()
 
-
-
-print("\nVEHICLES")
-vehicle.view_vehicles()
-
-
-booking.create_booking(
-    1,
-    1,
-    "2026-05-16",
-    "2026-05-20"
-)
+    return jsonify({
+        "message":"Booking Successful"
+    })
 
 
-print("\nBOOKINGS")
-booking.view_bookings()
+if __name__=="__main__":
+    app.run(debug=True)
