@@ -1,10 +1,16 @@
 import mysql.connector
+from mysql.connector import Error
+from config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
 
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="car_rental_system"
-)
-
-cursor = db.cursor()
+try:
+    db = mysql.connector.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME
+    )
+    cursor = db.cursor(dictionary=True)
+except Error as e:
+    print("Database connection failed:", e)
+    db = None
+    cursor = None
