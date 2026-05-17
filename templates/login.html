@@ -1,66 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveLink Login</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>DriveLink Login</title>
-
-<link rel="stylesheet"
-href="{{ url_for('static',
-filename='css/style.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design.css') }}">
 </head>
 
 <body>
 
-<div class="container">
+    <nav>
+        <div class="logo">DriveLink</div>
 
-<h1>
+        <div class="nav-links">
+            <a href="/">Marketplace</a>
+            <a href="#">My Account</a>
+            <a href="/login">Sign In</a>
+        </div>
+    </nav>
 
-DriveLink Login
+    <section class="hero">
 
-</h1>
+        <div class="container">
 
-<form
-action="/login-user"
-method="POST">
+            <h1>DriveLink Login</h1>
 
-<input
-type="email"
-name="email"
-placeholder="Enter Email"
-required>
+            <form action="/login-user" method="POST">
 
-<input
-type="password"
-name="password"
-placeholder="Enter Password"
-required>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter Email"
+                    required
+                >
 
-<button type="submit">
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter Password"
+                    required
+                >
 
-Sign In
+                <button type="submit">Sign In</button>
 
-</button>
+            </form>
 
-</form>
+            <div style="text-align:center; margin-top:20px;">
+                <a href="/">Back to Home</a>
+            </div>
 
-<a href="/">
+        </div>
 
-Back to Home
+    </section>
 
-</a>
-
-</div>
-
-<script src=
-"{{ url_for('static',
-filename='js/app.js') }}">
-</script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 </body>
 </html>
