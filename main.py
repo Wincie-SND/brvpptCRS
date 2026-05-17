@@ -1,61 +1,34 @@
-from models.user import User
-from models.vehicle import Vehicle
-from models.booking import Booking
+from flask import Flask,render_template
+from database import db
+
+app=Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI']="mysql+pymysql://root:@localhost/car_rental_system"
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+
+db.init_app(app)
 
 
-user = User()
-vehicle = Vehicle()
-booking = Booking()
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 
-
-user.add_user(
-    "Juan Dela Cruz",
-    "juan123",
-    "12345",
-    "tenant"
-)
-
-user.add_user(
-    "Admin User",
-    "admin",
-    "admin123",
-    "admin"
-)
+@app.route("/login")
+def login():
+    return render_template("login.html")
 
 
-
-vehicle.add_vehicle(
-    "Toyota",
-    "Vios",
-    1500,
-    "Available"
-)
-
-vehicle.add_vehicle(
-    "Honda",
-    "Civic",
-    2500,
-    "Available"
-)
+@app.route("/portal")
+def portal():
+    return render_template("portal.html")
 
 
-print("\nUSERS")
-user.view_users()
+@app.route("/drivelink")
+def drivelink():
+    return render_template("Drivelink.html")
 
 
-
-print("\nVEHICLES")
-vehicle.view_vehicles()
-
-
-booking.create_booking(
-    1,
-    1,
-    "2026-05-16",
-    "2026-05-20"
-)
-
-
-print("\nBOOKINGS")
-booking.view_bookings()
+if __name__=="__main__":
+    app.run(debug=True)

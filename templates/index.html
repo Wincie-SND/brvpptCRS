@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="renter">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriveX — Find Your Ride</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body { font-family: var(--font-body); background: var(--clr-bg); color: var(--clr-text); margin: 0; }
+
+    /* Hero Search */
+    .hero {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,0.12) 0%, transparent 70%),
+        var(--clr-bg);
+      border-bottom: 1px solid var(--clr-border);
+      padding: 4rem 0 3rem;
+      text-align: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--clr-primary-muted);
+      border: 1px solid var(--clr-primary-border);
+      border-radius: 99px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--clr-primary-light);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 span { color: var(--clr-primary); }
+
+    .hero p {
+      font-size: 1rem;
+      color: var(--clr-text-2);
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+    }
+
+    /* Search Bar */
+    .search-panel {
+      background: var(--clr-bg-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-xl);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 760px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .search-field {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .search-field label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--clr-text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+
+    .search-field input, .search-field select {
+      background: transparent;
+      border: none;
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      outline: none;
+      width: 100%;
+    }
+
+    .search-field input::placeholder { color: var(--clr-text-3); }
+    .search-field select option { background: var(--clr-bg-2); color: var(--clr-text); }
+
+    .search-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--clr-border);
+      flex-shrink: 0;
+    }
+
+    /* Layout: sidebar + grid */
+    .market-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 2rem;
+      max-width: 1280px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Filter Sidebar */
+    .filter-sidebar {
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+      background: var(--clr-bg-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+
+    .filter-title {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--clr-text);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-section { margin-bottom: 1.5rem; }
+    .filter-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--clr-text-3);
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+
+    .filter-select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      background: var(--clr-bg-3);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color var(--duration-fast) var(--ease-smooth);
+    }
+    .filter-select:focus { border-color: var(--clr-primary); }
+    .filter-select option { background: var(--clr-bg-2); }
+
+    .price-range {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .price-slider {
+      width: 100%;
+      accent-color: var(--clr-primary);
+      cursor: pointer;
+    }
+
+    /* Account View */
+    .account-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Chat Interface */
+    .user-chat-wrap {
+      background: var(--clr-bg-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 540px;
+    }
+
+    .user-chat-head {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--clr-border);
+      background: var(--clr-bg-3);
+      flex-shrink: 0;
+    }
+
+    .user-chat-threads {
+      width: 100%;
+      overflow-y: auto;
+      border-bottom: 1px solid var(--clr-border);
+      max-height: 130px;
+    }
+
+    .chat-messages-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-input-tray {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1.25rem;
+      border-top: 1px solid var(--clr-border);
+      background: var(--clr-bg-3);
+      flex-shrink: 0;
+    }
+
+    .chat-input-tray input {
+      flex: 1;
+      background: var(--clr-bg-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-full);
+      padding: 0.5rem 1rem;
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color var(--duration-fast) var(--ease-smooth);
+    }
+
+    .chat-input-tray input:focus { border-color: var(--clr-primary); }
+
+    /* Profile Card */
+    .profile-card {
+      background: var(--clr-bg-2);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--clr-primary-muted);
+      border: 2px solid var(--clr-primary-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--clr-primary-light);
+      margin: 0 auto 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .market-layout { grid-template-columns: 1fr; }
+      .filter-sidebar { position: static; }
+      .account-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="theme-renter">
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-brand">Drive<span>X</span></div>
+    <div class="nav-links">
+      <button class="nav-link active" data-view="market">🏪 Marketplace</button>
+      <button class="nav-link" data-view="account">👤 My Account</button>
+
+      <!-- Guest state -->
+      <div id="navLogin">
+        <a href="login.html" class="btn btn-primary btn-sm">Sign In</a>
+      </div>
+
+      <!-- Logged in state -->
+      <div id="navUser" style="display:none;align-items:center;gap:0.75rem">
+        <div class="avatar avatar-sm" style="background:var(--clr-primary-muted);color:var(--clr-primary-light)">
+          <span id="navName">U</span>
+        </div>
+        <button id="logoutBtn" class="btn btn-ghost btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── MARKETPLACE VIEW ─── -->
+  <div id="viewMarket">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-eyebrow">⚡ 9 Vehicles Available Now</div>
+        <h1>Find Your Perfect <span>Rental</span></h1>
+        <p>Browse premium vehicles from top-rated local fleet partners. Book in seconds.</p>
+
+        <!-- Search Panel -->
+        <div class="search-panel">
+          <div class="search-field">
+            <label>📍 Location</label>
+            <input type="text" placeholder="Metro Manila, PH">
+          </div>
+          <div class="search-divider"></div>
+          <div class="search-field">
+            <label>📅 Pick-up</label>
+            <input type="date" id="dateFrom">
+          </div>
+          <div class="search-divider"></div>
+          <div class="search-field">
+            <label>📅 Return</label>
+            <input type="date" id="dateTo">
+          </div>
+          <div class="search-divider"></div>
+          <button class="btn btn-primary" style="white-space:nowrap;flex-shrink:0">
+            🔍 Search
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Market Layout -->
+    <div class="market-layout">
+
+      <!-- Filter Sidebar -->
+      <aside class="filter-sidebar">
+        <div class="filter-title">
+          Filters
+          <button id="resetFilters" class="btn btn-ghost btn-sm" style="font-size:0.75rem;padding:4px 10px">Reset</button>
+        </div>
+
+        <!-- Price -->
+        <div class="filter-section">
+          <span class="filter-label">Max Price / Day</span>
+          <div class="price-range">
+            <input type="range" class="price-slider" id="priceFilter"
+              min="1000" max="5000" step="100" value="5000">
+            <div class="flex justify-between">
+              <span class="text-xs text-muted">₱1,000</span>
+              <span class="text-xs font-display font-bold" id="priceValue" style="color:var(--clr-text)">₱5,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brand -->
+        <div class="filter-section">
+          <span class="filter-label">Brand</span>
+          <select class="filter-select" id="brandFilter">
+            <option value="">All Brands</option>
+            <option value="Toyota">Toyota</option>
+            <option value="Honda">Honda</option>
+            <option value="Mitsubishi">Mitsubishi</option>
+            <option value="Ford">Ford</option>
+            <option value="Mazda">Mazda</option>
+            <option value="Suzuki">Suzuki</option>
+            <option value="Geely">Geely</option>
+          </select>
+        </div>
+
+        <!-- Category -->
+        <div class="filter-section">
+          <span class="filter-label">Category</span>
+          <select class="filter-select" id="categoryFilter">
+            <option value="">All Categories</option>
+            <option value="Sedan">Sedan</option>
+            <option value="SUV">SUV</option>
+            <option value="Pickup">Pickup</option>
+            <option value="Van">Van</option>
+          </select>
+        </div>
+
+        <!-- Transmission -->
+        <div class="filter-section">
+          <span class="filter-label">Transmission</span>
+          <select class="filter-select" id="transFilter">
+            <option value="">All Types</option>
+            <option value="Automatic">Automatic</option>
+            <option value="Manual">Manual</option>
+            <option value="CVT">CVT</option>
+            <option value="DCT">DCT</option>
+          </select>
+        </div>
+
+        <hr class="divider">
+
+        <div style="background:var(--clr-primary-muted);border:1px solid var(--clr-primary-border);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.78rem;color:var(--clr-text-2)">
+          <p style="margin-bottom:0.3rem;font-weight:600;color:var(--clr-primary-light)">🏢 Fleet Partners</p>
+          <p>Horizon Car Rentals</p>
+          <p>MetroGlide Ph</p>
+        </div>
+      </aside>
+
+      <!-- Vehicle Grid -->
+      <main>
+        <div class="section-header">
+          <div>
+            <h3 style="margin-bottom:0.2rem">Available Vehicles</h3>
+            <p class="text-sm text-muted">Showing all rental fleet inventory</p>
+          </div>
+          <div class="flex gap-2 items-center">
+            <span class="badge badge-success"><span class="status-dot online"></span> Live inventory</span>
+          </div>
+        </div>
+        <div class="grid-auto" id="vehicleGrid">
+          <!-- Populated by app.js -->
+          <div class="skeleton" style="height:320px;border-radius:var(--radius-lg)"></div>
+          <div class="skeleton" style="height:320px;border-radius:var(--radius-lg)"></div>
+          <div class="skeleton" style="height:320px;border-radius:var(--radius-lg)"></div>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ─── ACCOUNT VIEW ─── -->
+  <div id="viewAccount" style="display:none">
+    <div class="account-grid">
+
+      <!-- Left: Profile + Bookings -->
+      <div>
+        <!-- Profile Card (populated by JS) -->
+        <div class="profile-card" id="profileCard">
+          <div class="profile-avatar" id="profileAvatar">?</div>
+          <h3 id="profileName" style="margin-bottom:0.25rem">Loading…</h3>
+          <p class="text-sm text-muted" id="profileEmail"></p>
+          <div class="flex justify-center gap-2 mt-3">
+            <span id="profileLicense" class="badge badge-neutral"></span>
+          </div>
+        </div>
+
+        <!-- Bookings -->
+        <div>
+          <h4 class="mb-3">📋 My Rentals</h4>
+          <div id="myBookings">
+            <div class="skeleton" style="height:80px;border-radius:var(--radius-md);margin-bottom:0.75rem"></div>
+            <div class="skeleton" style="height:80px;border-radius:var(--radius-md)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Chat -->
+      <div>
+        <h4 class="mb-3">💬 Support Chat</h4>
+
+        <div class="user-chat-wrap">
+          <div class="user-chat-head">
+            <p style="font-weight:600;font-size:0.875rem;color:var(--clr-text)">Conversations with Fleet Partners</p>
+            <p class="text-xs text-muted">Click a thread to view messages</p>
+          </div>
+
+          <!-- Thread List -->
+          <div class="user-chat-threads" id="myChatList">
+            <p class="p-4 text-sm text-muted">Loading conversations…</p>
+          </div>
+
+          <!-- Messages -->
+          <div class="chat-messages-wrap" id="chatWindow">
+            <div style="text-align:center;margin:auto;color:var(--clr-text-3)">
+              <div style="font-size:2.5rem;margin-bottom:0.75rem">💬</div>
+              <p class="text-sm">Select a conversation to read messages</p>
+            </div>
+          </div>
+
+          <!-- Input -->
+          <div class="chat-input-tray" id="chatInputArea">
+            <input type="text" id="userChatInput" placeholder="Type a message… (Enter to send)">
+            <button id="userChatSend" class="btn btn-primary btn-sm" style="flex-shrink:0">Send</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="border-top:1px solid var(--clr-border);padding:2rem 1.5rem;margin-top:4rem;background:var(--clr-bg-2)">
+    <div class="container flex items-center justify-between" style="flex-wrap:wrap;gap:1rem">
+      <div class="nav-brand" style="font-size:1.1rem">Drive<span style="color:var(--clr-primary)">X</span></div>
+      <p class="text-xs text-muted">© 2025 DriveX · Premium Multi-Tenant Car Rental Platform</p>
+      <div class="flex gap-4">
+        <span class="text-xs text-muted">
+          🏢 <a href="login.html" style="color:var(--clr-text-3);text-decoration:underline">Partners: Access Business Portal Workspace</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script>
+    // Populate profile card once session is available
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = Session ? Session.get() : null;
+      if (session) {
+        const el = {
+          avatar: document.getElementById('profileAvatar'),
+          name:   document.getElementById('profileName'),
+          email:  document.getElementById('profileEmail'),
+          lic:    document.getElementById('profileLicense'),
+        };
+        if (el.avatar) el.avatar.textContent = session.avatar || '?';
+        if (el.name) el.name.textContent = session.name || '';
+        if (el.email) el.email.textContent = session.email || '';
+        if (el.lic) el.lic.innerHTML = UI.statusBadge(session.license_status || 'pending');
+      }
+    });
+  </script>
+</body>
+</html>
