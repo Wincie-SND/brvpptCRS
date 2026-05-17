@@ -306,7 +306,7 @@ href="{{ url_for('static', filename='css/style.css') }}">
         <div class="form-header">
           <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
             <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--clr-primary);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🚀</div>
-            <span style="font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--clr-text)">DriveX</span>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--clr-text)">DriveLink</span>
           </div>
           <h2 class="form-title">Welcome back</h2>
           <p class="form-subtitle">Sign in to your account to continue.</p>
@@ -321,7 +321,7 @@ href="{{ url_for('static', filename='css/style.css') }}">
           <p><strong>Admin:</strong> admin@drivelink.io / superadmin999 · AdminKey: <strong>DX-ADMIN-9F2A</strong></p>
         </div>
 
-        <form id="loginForm" novalidate>
+        <form id="loginForm" onsubmit="return false;">
 
           <!-- Tenant Key -->
           <div class="form-group mb-4">
@@ -383,8 +383,8 @@ href="{{ url_for('static', filename='css/style.css') }}">
           <p id="loginError" class="form-error mb-3" style="display:none"></p>
 
           <!-- Submit -->
-          <button type="submit" id="loginBtn" class="btn btn-primary btn-full btn-lg">
-            Sign In to DriveX
+          <button type="submit" id="loginBtn">
+             Sign In to DriveLink
           </button>
 
         </form>

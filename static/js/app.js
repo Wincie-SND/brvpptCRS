@@ -1,5 +1,5 @@
 /* ============================================================
-   DRIVEX — app.js
+   DRIVELINK — app.js
    Mock Database · Auth Engine · Session Logic · Chat State
    ============================================================ */
 
@@ -128,7 +128,7 @@ const DB = {
     {
       id: 'U999',
       name: 'Admin Root',
-      email: 'admin@drivex.io',
+      email: 'admin@drivelink.io',
       password: 'superadmin999',
       role: 'super_admin',
       tenant_id: null,
@@ -314,26 +314,26 @@ const Session = {
   ADMIN_SECRET_KEY: 'DX-ADMIN-9F2A',
 
   set(data) {
-    sessionStorage.setItem('drivex_session', JSON.stringify(data));
+    sessionStorage.setItem('drivelink_session', JSON.stringify(data));
   },
 
   get() {
     try {
-      return JSON.parse(sessionStorage.getItem('drivex_session')) || null;
+      return JSON.parse(sessionStorage.getItem('drivelink_session')) || null;
     } catch { return null; }
   },
 
   clear() {
-    sessionStorage.removeItem('drivex_session');
-    sessionStorage.removeItem('drivex_admin_key');
+    sessionStorage.removeItem('drivelink_session');
+    sessionStorage.removeItem('drivelink_admin_key');
   },
 
   setAdminKey(key) {
-    sessionStorage.setItem('drivex_admin_key', key);
+    sessionStorage.setItem('drivelink_admin_key', key);
   },
 
   getAdminKey() {
-    return sessionStorage.getItem('drivex_admin_key');
+    return sessionStorage.getItem('drivelink_admin_key');
   },
 
   isLoggedIn() { return this.get() !== null; },
@@ -359,50 +359,177 @@ const Session = {
 // ─────────────────────────────────────────────
 
 const Auth = {
+
   login(email, password, tenantKey) {
-    const user = DB.users.find(u => u.email === email && u.password === password);
-    if (!user) return { success: false, error: 'Invalid email or password.' };
 
-    if (user.role === 'renter') {
-      Session.set({ ...user, password: undefined });
-      return { success: true, redirect: 'index.html' };
+    const user = DB.users.find(
+      u => u.email === email && u.password === password
+    );
+
+    if (!user) {
+      return {
+        success:false,
+        error:'Invalid email or password.'
+      };
     }
 
-    if (user.role === 'tenant_admin' || user.role === 'tenant_staff') {
-      const tenant = DB.tenants.find(t => t.key === tenantKey.toUpperCase());
-      if (!tenant) return { success: false, error: 'Invalid Tenant Account Key.' };
-      if (tenant.id !== user.tenant_id) return { success: false, error: 'Account key does not match your registered tenant.' };
-      Session.set({ ...user, password: undefined, tenantName: tenant.name });
-      return { success: true, redirect: 'portal.html' };
+
+    // RENTER LOGIN
+    if(user.role==="renter"){
+
+      Session.set({
+        ...user,
+        password:undefined
+      });
+
+      return{
+        success:true,
+        redirect:"index.html"
+      };
+
     }
+
+
+    // TENANT LOGIN
+    if(
+      user.role==="tenant_admin" ||
+      user.role==="tenant_staff"
+    ){
+
+      const tenant=DB.tenants.find(
+        t=>t.key===tenantKey.toUpperCase()
+      );
+
+      if(!tenant){
+
+        return{
+          success:false,
+          error:"Invalid Tenant Account Key."
+        };
+
+      }
+
+      if(tenant.id!==user.tenant_id){
+
+        return{
+          success:false,
+          error:"Account key does not match your tenant."
+        };
+
+      }
+
+      Session.set({
+        ...user,
+        password:undefined,
+        tenantName:tenant.name
+      });
+
+      return{
+        success:true,
+        redirect:"portal.html"
+      };
+
+    }
+
+
+    // ADMIN LOGIN
+    if(user.role==="super_admin"){
+
+      Session.set({
+        ...user,
+        password:undefined,
+        pendingAdminChallenge:true
+      });
+
+      return{
+        success:true,
+        requiresChallenge:true
+      };
+
+    }
+
+
+    return{
+      success:false,
+      error:"Unknown account type."
+    };
+
+  },
+
+
+
+  verifyAdminKey(key){
+
+    if(key===Session.ADMIN_SECRET_KEY){
+
+      Session.setAdminKey(key);
+
+      const session=Session.get();
+
+      if(session){
+
+        delete session.pendingAdminChallenge;
+
+        Session.set(session);
+
+      }
+
+      return true;
+    }
+
+    return false;
+
+  },
+
+
+  logout(){
+
+    Session.clear();
+
+    window.location.href="login.html";
+
+  }
+
+};
 
     if (user.role === 'super_admin') {
-      // Store partial session; require secondary ADMIN_KEY challenge
-      Session.set({ ...user, password: undefined, pendingAdminChallenge: true });
-      return { success: true, requiresChallenge: true };
+      if (data.success) {
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    if (data.user.role === "admin") {
+        window.location.href = "/admin";
+    } 
+    else if (data.user.role === "tenant") {
+        window.location.href = "/portal";
+    } 
+    else {
+        window.location.href = "/";
+    }
+} else {
+    alert(data.message);
+}
     }
 
     return { success: false, error: 'Unknown account type.' };
-  },
 
-  verifyAdminKey(key) {
+  verifyAdminKey(key) 
+  {
     if (key === Session.ADMIN_SECRET_KEY) {
       Session.setAdminKey(key);
       const s = Session.get();
       if (s) {
         delete s.pendingAdminChallenge;
         Session.set(s);
-      }
+      };
       return true;
     }
     return false;
-  },
+  };
 
-  logout() {
-    Session.clear();
-    window.location.href = 'login.html';
-  }
-};
+  logout() 
+  {Session.clear();
+    window.location.href = 'login.html';};
+
 
 // ─────────────────────────────────────────────
 // § 4. DATA ACCESS LAYER (Tenant-Isolated)
@@ -616,7 +743,7 @@ function initLoginPage() {
   const session = Session.get();
   if (session) {
     if (session.role === 'renter') window.location.href = 'index.html';
-    else if (session.role === 'super_admin') window.location.href = 'admin.html';
+    else if (session.role === 'super_admin') window.location.href = '/admin';
     else window.location.href = 'portal.html';
     return;
   }
@@ -776,7 +903,7 @@ function renderMarketplace(filters = {}) {
           <h4 style="font-size:1rem">${v.brand} ${v.model}</h4>
           <span class="text-xs text-muted font-mono">${v.year}</span>
         </div>
-        <p class="text-xs text-muted mb-3">${tenant ? tenant.name : 'DriveX Fleet'}</p>
+        <p class="text-xs text-muted mb-3">${tenant ? tenant.name : 'DriveLink Fleet'}</p>
         <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
           <span class="badge badge-neutral">⚙️ ${v.transmission}</span>
           <span class="badge badge-neutral">⛽ ${v.fuel}</span>

@@ -32,6 +32,11 @@ def portal():
 def drivelink():
     return render_template("Drivelink.html")
 
+@app.route("/admin")
+@app.route("/admin.html")
+def admin_dashboard():
+    return render_template("admin.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

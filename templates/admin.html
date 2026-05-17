@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DriveLink Admin Dashboard</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+body{
+    margin:0;
+    background:#0b0b14;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+.sidebar{
+    width:250px;
+    height:100vh;
+    background:#111827;
+    position:fixed;
+    left:0;
+    top:0;
+    padding:20px;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:bold;
+    margin-bottom:40px;
+}
+
+.logo span{
+    color:#6d6dff;
+}
+
+.sidebar a{
+    display:block;
+    color:white;
+    text-decoration:none;
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:10px;
+    background:#1f2937;
+}
+
+.sidebar a:hover{
+    background:#6d6dff;
+}
+
+.main{
+    margin-left:280px;
+    padding:30px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.card{
+    background:#151827;
+    padding:30px;
+    border-radius:15px;
+}
+
+.card h2{
+    margin:0;
+    color:#6d6dff;
+}
+
+.card p{
+    font-size:30px;
+}
+
+table{
+    width:100%;
+    margin-top:40px;
+    border-collapse:collapse;
+}
+
+table th{
+    background:#1f2937;
+    padding:15px;
+}
+
+table td{
+    padding:15px;
+    border-bottom:1px solid #222;
+}
+
+.logout{
+    background:red;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+Drive<span>Link</span>
+</div>
+
+<a href="#">Dashboard</a>
+<a href="#">Tenants</a>
+<a href="#">Vehicles</a>
+<a href="#">Bookings</a>
+<a href="#">Payments</a>
+<a href="#">Chat Support</a>
+
+<a href="/login" class="logout">
+Logout
+</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Admin Dashboard</h1>
+
+<div class="cards">
+
+<div class="card">
+<h2>Users</h2>
+<p id="users">0</p>
+</div>
+
+<div class="card">
+<h2>Vehicles</h2>
+<p id="vehicles">0</p>
+</div>
+
+<div class="card">
+<h2>Bookings</h2>
+<p id="bookings">0</p>
+</div>
+
+<div class="card">
+<h2>Revenue</h2>
+<p id="revenue">₱0</p>
+</div>
+
+</div>
+
+
+<h2>Recent Bookings</h2>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Customer</th>
+<th>Vehicle</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>1</td>
+<td>Maria</td>
+<td>Toyota Vios</td>
+<td>Pending</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>Ryan</td>
+<td>Honda Civic</td>
+<td>Confirmed</td>
+</tr>
+
+</table>
+
+</div>
+
+<script>
+
+fetch("/test")
+.then(response=>response.json())
+.then(data=>{
+
+console.log(data)
+
+})
+
+</script>
+
+</body>
+</html>
