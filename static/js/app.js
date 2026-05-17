@@ -128,7 +128,7 @@ const DB = {
     {
       id: 'U999',
       name: 'Admin Root',
-      email: 'admin@drivex.io',
+      email: 'admin@drivelink.io',
       password: 'superadmin999',
       role: 'super_admin',
       tenant_id: null,
@@ -259,7 +259,7 @@ const DB = {
         { from: 'user', text: 'Great! Do I need to bring anything aside from my driver\'s license?', time: '09:20 AM' },
         { from: 'agent', text: 'Please also bring one valid government ID and a credit card for the security deposit. We\'ll handle everything else!', time: '09:23 AM' },
         { from: 'user', text: 'Can I get an early pickup at 7am?', time: '10:45 AM' },
-        { from: 'user', text: 'Our usual schedule starts at 8am, sorry. But if you arrive at 7:30, we can check you in early.', time: '10:47 AM' }
+        { from: 'agent', text: 'Our usual schedule starts at 8am, sorry. But if you arrive at 7:30, we can check you in early.', time: '10:47 AM' }
       ]
     },
     {
@@ -311,29 +311,29 @@ const DB = {
 // ─────────────────────────────────────────────
 
 const Session = {
-  ADMIN_SECRET_KEY: 'DX-ADMIN-9F2A',
+  ADMIN_SECRET_KEY: 'DL-ADMIN-9F2A',
 
   set(data) {
-    sessionStorage.setItem('drivelink_session', JSON.stringify(data));
+    sessionStorage.setItem('drivex_session', JSON.stringify(data));
   },
 
   get() {
     try {
-      return JSON.parse(sessionStorage.getItem('drivelink_session')) || null;
+      return JSON.parse(sessionStorage.getItem('drivex_session')) || null;
     } catch { return null; }
   },
 
   clear() {
-    sessionStorage.removeItem('drivelink_session');
-    sessionStorage.removeItem('drivelink_admin_key');
+    sessionStorage.removeItem('drivex_session');
+    sessionStorage.removeItem('drivex_admin_key');
   },
 
   setAdminKey(key) {
-    sessionStorage.setItem('drivelink_admin_key', key);
+    sessionStorage.setItem('drivex_admin_key', key);
   },
 
   getAdminKey() {
-    return sessionStorage.getItem('drivelink_admin_key');
+    return sessionStorage.getItem('drivex_admin_key');
   },
 
   isLoggedIn() { return this.get() !== null; },
@@ -612,88 +612,37 @@ const UI = {
 // ─────────────────────────────────────────────
 
 function initLoginPage() {
-  // Already logged in? Redirect
-  const session = Session.get();
-  if (session) {
-    if (session.role === 'renter') window.location.href = '/';
-    else if (session.role === 'super_admin') window.location.href = '/admin';
-    else window.location.href = '/tenant';
-    return;
-  }
-
-  const form     = document.getElementById('loginForm');
-  const errorEl  = document.getElementById('loginError');
-  const tenantEl = document.getElementById('tenantKey');
-  const emailEl  = document.getElementById('email');
-  const passEl   = document.getElementById('password');
-  const btnEl    = document.getElementById('loginBtn');
-  const challengeOverlay = document.getElementById('adminChallenge');
-  const challengeInput   = document.getElementById('adminKeyInput');
-  const challengeBtn     = document.getElementById('verifyAdminBtn');
-  const challengeError   = document.getElementById('challengeError');
+  /*
+    Flask mode:
+    Keep the original DriveX/DriveLink login UI exactly the same,
+    but submit credentials to the Flask backend so admin/tenant sessions work.
+  */
+  const form = document.getElementById('loginForm');
+  const errorEl = document.getElementById('loginError');
+  const btnEl = document.getElementById('loginBtn');
 
   if (!form) return;
 
+  form.setAttribute('action', '/login-user');
+  form.setAttribute('method', 'POST');
+
   form.addEventListener('submit', function(e) {
-    e.preventDefault();
+    const email = document.getElementById('email')?.value.trim();
+    const password = document.getElementById('password')?.value.trim();
+
     UI.clearError(errorEl);
 
-    const email = emailEl.value.trim();
-    const password = passEl.value.trim();
-    const tenantKey = tenantEl.value.trim();
-
     if (!email || !password) {
+      e.preventDefault();
       UI.showError(errorEl, 'Email and password are required.');
       return;
     }
 
-    btnEl.disabled = true;
-    btnEl.textContent = 'Authenticating…';
-
-    setTimeout(() => {
-      const result = Auth.login(email, password, tenantKey);
-
-      if (!result.success) {
-        UI.showError(errorEl, result.error);
-        btnEl.disabled = false;
-        btnEl.textContent = 'Sign In';
-        return;
-      }
-
-      if (result.requiresChallenge) {
-        btnEl.disabled = false;
-        btnEl.textContent = 'Sign In';
-        challengeOverlay.style.display = 'flex';
-        challengeInput.focus();
-        return;
-      }
-
-      window.location.href = result.redirect;
-    }, 600);
+    if (btnEl) {
+      btnEl.disabled = true;
+      btnEl.textContent = 'Authenticating…';
+    }
   });
-
-  // Admin key challenge
-  if (challengeBtn) {
-    challengeBtn.addEventListener('click', function() {
-      UI.clearError(challengeError);
-      const key = challengeInput.value.trim();
-      if (!key) { UI.showError(challengeError, 'Please enter the Admin Access Key.'); return; }
-
-      if (Auth.verifyAdminKey(key)) {
-        window.location.href = '/admin?key=' + key;
-      } else {
-        UI.showError(challengeError, 'Invalid Admin Access Key. Access denied.');
-        challengeInput.value = '';
-        challengeInput.focus();
-      }
-    });
-  }
-
-  if (challengeInput) {
-    challengeInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') challengeBtn.click();
-    });
-  }
 }
 
 // ─────────────────────────────────────────────
@@ -946,13 +895,12 @@ window.handleBooking = function(vehicleId) {
 // ─────────────────────────────────────────────
 
 function initPortalPage() {
-  // Works with the original front-end session and also with Flask-rendered /tenant.
-  let session = Session.get();
-  if (!session || (!['tenant_admin', 'tenant_staff'].includes(session.role))) {
-    const fallback = DB.users.find(u => u.role === 'tenant_admin');
-    session = fallback ? { ...fallback, password: undefined } : null;
-  }
-  if (!session) return;
+  const session = Session.get() || {
+    name: 'Tenant User',
+    avatar: 'TU',
+    role: 'tenant_admin',
+    tenant_id: 'T_HORIZON'
+  };
 
   const tenantId = session.tenant_id;
   const tenant   = DataStore.getTenantById(tenantId);
@@ -1225,16 +1173,14 @@ function renderPortalBookingContext(bookingId, userId) {
 // ─────────────────────────────────────────────
 
 function initAdminPage() {
-  // Flask already protects /admin after login. If browser sessionStorage is empty,
-  // use a safe display fallback so the original dashboard UI still renders.
-  let session = Session.get();
-  if (!session || !['admin', 'super_admin'].includes(session.role)) {
-    session = {
-      name: 'DriveLink System Admin',
-      avatar: 'DL',
-      role: 'super_admin'
-    };
-  }
+  // Flask backend already protects /admin after login.
+  // Keep the original dashboard UI instead of replacing it with a 404 page.
+  const session = Session.get() || {
+    name: 'DriveLink Admin',
+    avatar: 'DA',
+    role: 'super_admin'
+  };
+
   document.querySelectorAll('.admin-user-name').forEach(el => el.textContent = session.name);
   document.querySelectorAll('.admin-user-avatar').forEach(el => el.textContent = session.avatar);
 
@@ -1441,21 +1387,21 @@ function initChatSend(inputId, sendId, windowId, chatIdFn, fromRole = 'user') {
 // ─────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-  const page = window.location.pathname.replace(/^\/|\/$/g, '') || 'index';
+  const page = window.location.pathname.split('/').pop() || 'index.html';
 
-  if (page === 'login' || page === 'login.html') {
+  if (page === 'login.html' || page === 'login' || page === '') {
     initLoginPage();
-  } else if (page === 'index' || page === 'index.html') {
+  } else if (page === 'index.html' || page === '') {
     initIndexPage();
     // User chat send
     initChatSend('userChatInput', 'userChatSend', 'chatWindow',
       () => document.getElementById('chatInputArea')?.dataset.chatId, 'user');
-  } else if (page === 'portal' || page === 'portal.html' || page === 'tenant' || page === 'tenant.html') {
+  } else if (page === 'portal.html' || page === 'portal' || page === 'tenant' || page === 'tenant.html') {
     initPortalPage();
     // Portal agent chat send
     initChatSend('portalChatInput', 'portalChatSend', 'portalChatMessages',
       () => _portalActiveChatId, 'agent');
-  } else if (page === 'admin' || page === 'admin.html') {
+  } else if (page === 'admin.html' || page === 'admin') {
     initAdminPage();
   }
 });
