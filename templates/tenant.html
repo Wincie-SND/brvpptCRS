@@ -1,44 +1,43 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>Tenant Dashboard</title>
-
-<link rel="stylesheet"
-href="{{ url_for(
-'static',
-filename='css/style.css'
-) }}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveLink Tenant Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
 
-<h1>
+<h1>DriveLink Tenant Dashboard</h1>
 
-Tenant Dashboard
+<nav>
+    <a href="/">Home</a>
+    <a href="/vehicle">Vehicles</a>
+    <a href="/chat">Chat</a>
+    <a href="/logout">Logout</a>
+</nav>
 
-</h1>
+<section>
+    <h2>Tenant Chat Test</h2>
+    <p>Send a message to the test customer. This now uses the logged-in tenant as sender.</p>
 
-<div>
+    <form action="/send-message" method="POST">
+        <input type="hidden" name="receiver_id" value="4">
+        <textarea name="message" placeholder="Type tenant message to customer" required></textarea>
+        <button type="submit">Send as Logged-in Tenant</button>
+    </form>
+</section>
 
-Bookings
+<section>
+    <h2>Bookings</h2>
+    <div id="bookings-list">Loading bookings...</div>
+</section>
 
-</div>
+<section>
+    <h2>Vehicles</h2>
+    <div id="vehicles-list">Loading vehicles...</div>
+</section>
 
-<div>
-
-Vehicles
-
-</div>
-
-<script src=
-"{{ url_for(
-'static',
-filename='js/app.js'
-) }}">
-</script>
-
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

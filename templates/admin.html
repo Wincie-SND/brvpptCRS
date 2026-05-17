@@ -1,48 +1,36 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>
-
-DriveLink Admin Dashboard
-
-</title>
-
-<link rel="stylesheet"
-href="{{ url_for(
-'static',
-filename='css/style.css'
-) }}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveLink Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
 
-<h1>
+<h1>DriveLink Admin Dashboard</h1>
 
-DriveLink Admin Dashboard
+<nav>
+    <a href="/">Home</a>
+    <a href="/tenant">Tenant Dashboard</a>
+    <a href="/logout">Logout</a>
+</nav>
 
-</h1>
+<section>
+    <h2>Admin Login Fixed</h2>
+    <p>If you reached this page, the admin role redirect is working.</p>
+</section>
 
-<div id="admin-users">
+<section>
+    <h2>Tenants</h2>
+    <div id="admin-tenants">Loading tenants...</div>
+</section>
 
-Users
+<section>
+    <h2>Users</h2>
+    <div id="admin-users">Loading users...</div>
+</section>
 
-</div>
-
-<div id="admin-tenants">
-
-Tenants
-
-</div>
-
-<script src=
-"{{ url_for(
-'static',
-filename='js/app.js'
-) }}">
-</script>
-
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

@@ -1,29 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<title>DriveLink</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveLink — Find Your Ride</title>
 
 <link rel="stylesheet"
-href="{{ url_for('static',
-filename='css/style.css') }}">
+href="{{ url_for('static', filename='css/style.css') }}">
 
 </head>
 
 <body>
 
-<h1>DriveLink</h1>
+    <!-- NAVBAR -->
+    <nav>
 
-<a href="/login">
+        <div class="logo">
 
-Sign In
+            DriveLink
 
-</a>
+        </div>
 
-<script src=
-"{{ url_for('static',
-filename='js/app.js') }}">
-</script>
+        <div class="nav-links">
+
+            <a href="#">Marketplace</a>
+
+            <a href="#">My Account</a>
+
+            <!-- FIXED -->
+            <a href="/login">
+
+                Sign In
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <h1>
+
+            Find Your Perfect Rental
+
+        </h1>
+
+        <p>
+
+            Browse premium vehicles from top-rated local fleet partners.
+
+        </p>
+
+    </section>
+
+
+    <!-- VEHICLES -->
+    <section id="vehicle-container">
+
+        <!-- Your original cards stay here -->
+
+    </section>
+
+
+    <!-- FIXED JS PATH -->
+    <script
+    src="{{ url_for('static',
+    filename='js/app.js') }}">
+    </script>
 
 </body>
 </html>
