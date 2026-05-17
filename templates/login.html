@@ -1,101 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DriveX Login</title>
 
-    <link rel="stylesheet"
-    href="{{ url_for('static', filename='css/style.css') }}">
+<meta charset="UTF-8">
 
-    <style>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-        body{
-            margin:0;
-            font-family:Arial,sans-serif;
-            background:#0b0b16;
-            color:white;
+<title>DriveLink Login</title>
 
-            display:flex;
-            justify-content:center;
-            align-items:center;
-
-            height:100vh;
-        }
-
-        .container{
-
-            width:400px;
-
-            background:#131323;
-
-            padding:40px;
-
-            border-radius:20px;
-
-            box-shadow:0 0 25px rgba(0,0,0,.5);
-        }
-
-        h1{
-            text-align:center;
-            margin-bottom:30px;
-        }
-
-        input{
-
-            width:100%;
-
-            padding:14px;
-
-            margin-bottom:15px;
-
-            border:none;
-
-            border-radius:10px;
-
-            background:#1d1d33;
-
-            color:white;
-        }
-
-        button{
-
-            width:100%;
-
-            padding:14px;
-
-            border:none;
-
-            border-radius:10px;
-
-            background:#6366F1;
-
-            color:white;
-
-            cursor:pointer;
-
-            font-size:16px;
-        }
-
-        button:hover{
-
-            opacity:.9;
-        }
-
-        a{
-
-            color:#8b8fff;
-
-            text-decoration:none;
-        }
-
-        .back{
-
-            text-align:center;
-            margin-top:20px;
-        }
-
-    </style>
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/style.css') }}">
 
 </head>
 
@@ -103,37 +19,48 @@
 
 <div class="container">
 
-    <h1>DriveX Login</h1>
+<h1>
 
-    <form action="/login-user" method="POST">
+DriveLink Login
 
-        <input
-        type="email"
-        name="email"
-        placeholder="Enter Email"
-        required>
+</h1>
 
-        <input
-        type="password"
-        name="password"
-        placeholder="Enter Password"
-        required>
+<form
+action="/login-user"
+method="POST">
 
-        <button type="submit">
+<input
+type="email"
+name="email"
+placeholder="Enter Email"
+required>
 
-            Sign In
+<input
+type="password"
+name="password"
+placeholder="Enter Password"
+required>
 
-        </button>
+<button type="submit">
 
-    </form>
+Sign In
 
-    <div class="back">
+</button>
 
-        <a href="/">← Back to Home</a>
+</form>
 
-    </div> 
+<a href="/">
+
+Back to Home
+
+</a>
 
 </div>
+
+<script src=
+"{{ url_for('static',
+filename='js/app.js') }}">
+</script>
 
 </body>
 </html>

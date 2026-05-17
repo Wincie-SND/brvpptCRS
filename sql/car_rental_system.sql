@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2026 at 12:18 PM
+-- Generation Time: May 17, 2026 at 06:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -31,7 +31,8 @@ CREATE TABLE `bookings` (
   `booking_id` int(11) NOT NULL,
   `renter_id` int(11) DEFAULT NULL,
   `vehicle_id` int(11) DEFAULT NULL,
-  `status` varchar(50) DEFAULT NULL
+  `status` enum('Pending','Approved','Cancelled') DEFAULT 'Pending',
+  `booking_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -44,7 +45,8 @@ CREATE TABLE `chats` (
   `chat_id` int(11) NOT NULL,
   `sender_id` int(11) DEFAULT NULL,
   `receiver_id` int(11) DEFAULT NULL,
-  `message` text DEFAULT NULL
+  `message` text DEFAULT NULL,
+  `sent_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -55,16 +57,18 @@ CREATE TABLE `chats` (
 
 CREATE TABLE `tenants` (
   `tenant_id` int(11) NOT NULL,
-  `business_name` varchar(100) DEFAULT NULL
+  `business_name` varchar(100) NOT NULL,
+  `tenant_key` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tenants`
 --
 
-INSERT INTO `tenants` (`tenant_id`, `business_name`) VALUES
-(1, 'DriveLink'),
-(2, 'QuickRide');
+INSERT INTO `tenants` (`tenant_id`, `business_name`, `tenant_key`, `created_at`) VALUES
+(1, 'Horizon Car Rental', 'HORIZON', '2026-05-17 16:12:08'),
+(2, 'Metro Glide Rentals', 'METROGLIDE', '2026-05-17 16:12:08');
 
 -- --------------------------------------------------------
 
@@ -75,18 +79,21 @@ INSERT INTO `tenants` (`tenant_id`, `business_name`) VALUES
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `tenant_id` int(11) DEFAULT NULL,
-  `fullname` varchar(100) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `role` varchar(50) DEFAULT NULL
+  `fullname` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('admin','tenant_admin','tenant_staff','customer') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `tenant_id`, `fullname`, `email`, `password`, `role`) VALUES
-(1, 1, 'Admin User', 'admin@gmail.com', '123', 'admin');
+INSERT INTO `users` (`id`, `tenant_id`, `fullname`, `email`, `password`, `role`, `created_at`) VALUES
+(1, NULL, 'DriveLink System Admin', 'admin@drivelink.io', 'superadmin999', 'admin', '2026-05-17 16:12:08'),
+(2, 1, 'Carlos Horizon', 'carlos@horizon.com', 'horizon123', 'tenant_admin', '2026-05-17 16:12:08'),
+(3, 2, 'Ryan Metro', 'ryan@metroglide.com', 'metro123', 'tenant_admin', '2026-05-17 16:12:08');
 
 -- --------------------------------------------------------
 
@@ -98,18 +105,21 @@ CREATE TABLE `vehicles` (
   `vehicle_id` int(11) NOT NULL,
   `tenant_id` int(11) DEFAULT NULL,
   `vehicle_name` varchar(100) DEFAULT NULL,
+  `brand` varchar(100) DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL,
-  `availability` tinyint(1) DEFAULT NULL
+  `availability` tinyint(1) DEFAULT 1,
+  `image` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `vehicles`
 --
 
-INSERT INTO `vehicles` (`vehicle_id`, `tenant_id`, `vehicle_name`, `price`, `availability`) VALUES
-(1, 1, 'Toyota Vios', 1500.00, 1),
-(2, 1, 'Honda Civic', 2200.00, 1),
-(3, 2, 'Fortuner', 3000.00, 1);
+INSERT INTO `vehicles` (`vehicle_id`, `tenant_id`, `vehicle_name`, `brand`, `price`, `availability`, `image`, `created_at`) VALUES
+(1, 1, 'Toyota Vios', 'Toyota', 1500.00, 1, NULL, '2026-05-17 16:12:08'),
+(2, 1, 'Honda Civic', 'Honda', 2200.00, 1, NULL, '2026-05-17 16:12:08'),
+(3, 2, 'Fortuner', 'Toyota', 3500.00, 1, NULL, '2026-05-17 16:12:08');
 
 --
 -- Indexes for dumped tables
@@ -135,13 +145,15 @@ ALTER TABLE `chats`
 -- Indexes for table `tenants`
 --
 ALTER TABLE `tenants`
-  ADD PRIMARY KEY (`tenant_id`);
+  ADD PRIMARY KEY (`tenant_id`),
+  ADD UNIQUE KEY `tenant_key` (`tenant_key`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
   ADD KEY `tenant_id` (`tenant_id`);
 
 --
@@ -177,7 +189,7 @@ ALTER TABLE `tenants`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `vehicles`
@@ -207,13 +219,13 @@ ALTER TABLE `chats`
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
-  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`);
+  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `vehicles`
 --
 ALTER TABLE `vehicles`
-  ADD CONSTRAINT `vehicles_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`);
+  ADD CONSTRAINT `vehicles_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
