@@ -359,23 +359,145 @@ const Session = {
 // ─────────────────────────────────────────────
 
 const Auth = {
-  login(email, password, tenantKey) {
-    const user = DB.users.find(u => u.email === email && u.password === password);
-    if (!user) return { success: false, error: 'Invalid email or password.' };
 
-    if (user.role === 'renter') {
-      Session.set({ ...user, password: undefined });
-      return { success: true, redirect: 'index.html' };
+  login(email,password,tenantKey){
+
+    const user = DB.users.find(
+      u=>u.email===email &&
+      u.password===password
+    );
+
+    if(!user){
+
+      return{
+        success:false,
+        error:'Invalid email or password.'
+      };
+
     }
 
-    if (user.role === 'tenant_admin' || user.role === 'tenant_staff') {
-      const tenant = DB.tenants.find(t => t.key === tenantKey.toUpperCase());
-      if (!tenant) return { success: false, error: 'Invalid Tenant Account Key.' };
-      if (tenant.id !== user.tenant_id) return { success: false, error: 'Account key does not match your registered tenant.' };
-      Session.set({ ...user, password: undefined, tenantName: tenant.name });
-      return { success: true, redirect: 'portal.html' };
+
+    if(user.role==="renter"){
+
+      Session.set({
+        ...user,
+        password:undefined
+      });
+
+      return{
+        success:true,
+        redirect:"index.html"
+      };
+
     }
 
+
+    if(
+      user.role==="tenant_admin" ||
+      user.role==="tenant_staff"
+    ){
+
+      const tenant=
+      DB.tenants.find(
+      t=>t.key===tenantKey.toUpperCase()
+      );
+
+      if(!tenant){
+
+        return{
+          success:false,
+          error:"Invalid Tenant Account Key."
+        };
+
+      }
+
+      if(
+      tenant.id!==user.tenant_id
+      ){
+
+        return{
+          success:false,
+          error:"Account key mismatch."
+        };
+
+      }
+
+      Session.set({
+        ...user,
+        password:undefined,
+        tenantName:tenant.name
+      });
+
+      return{
+        success:true,
+        redirect:"portal.html"
+      };
+
+    }
+
+
+    if(user.role==="super_admin"){
+
+      Session.set({
+        ...user,
+        password:undefined,
+        pendingAdminChallenge:true
+      });
+
+      return{
+        success:true,
+        requiresChallenge:true
+      };
+
+    }
+
+
+    return{
+      success:false,
+      error:"Unknown account type."
+    };
+
+  },
+
+
+  verifyAdminKey(key){
+
+    if(
+      key===Session.ADMIN_SECRET_KEY
+    ){
+
+      Session.setAdminKey(key);
+
+      const session=
+      Session.get();
+
+      if(session){
+
+        delete session.pendingAdminChallenge;
+
+        Session.set(session);
+
+      }
+
+      return true;
+
+    }
+
+    return false;
+
+  },
+
+
+  logout(){
+
+    Session.clear();
+
+    window.location.href=
+    "login.html";
+
+  }
+
+};
 
 // ─────────────────────────────────────────────
 // § 4. DATA ACCESS LAYER (Tenant-Isolated)
@@ -1420,21 +1542,62 @@ function initChatSend(inputId, sendId, windowId, chatIdFn, fromRole = 'user') {
 // ─────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-  const page = window.location.pathname.split('/').pop() || 'index.html';
 
-  if (page === 'login.html' || page === '') {
-    initLoginPage();
-  } else if (page === 'index.html') {
+  const path = window.location.pathname;
+  const page = path.split('/').pop();
+
+  if (
+    path === "/" ||
+    page === "" ||
+    page === "index.html" ||
+    page === "index"
+  ) {
+
     initIndexPage();
-    // User chat send
-    initChatSend('userChatInput', 'userChatSend', 'chatWindow',
-      () => document.getElementById('chatInputArea')?.dataset.chatId, 'user');
-  } else if (page === 'portal.html') {
-    initPortalPage();
-    // Portal agent chat send
-    initChatSend('portalChatInput', 'portalChatSend', 'portalChatMessages',
-      () => _portalActiveChatId, 'agent');
-  } else if (page === 'admin.html' || page === 'admin') {
-    initAdminPage();
+
+    initChatSend(
+      'userChatInput',
+      'userChatSend',
+      'chatWindow',
+      () => document.getElementById('chatInputArea')?.dataset.chatId,
+      'user'
+    );
+
   }
-});
+
+  else if (
+    page === "login.html" ||
+    page === "login"
+  ) {
+
+    initLoginPage();
+
+  }
+
+  else if (
+    page === "portal.html" ||
+    page === "portal"
+  ) {
+
+    initPortalPage();
+
+    initChatSend(
+      'portalChatInput',
+      'portalChatSend',
+      'portalChatMessages',
+      () => _portalActiveChatId,
+      'agent'
+    );
+
+  }
+
+  else if (
+    page === "admin.html" ||
+    page === "admin"
+  ) {
+
+    initAdminPage();
+
+  }
+
+]);

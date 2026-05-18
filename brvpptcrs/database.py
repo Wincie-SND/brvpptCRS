@@ -1,12 +1,18 @@
-import mysql.connector
+from flask_sqlalchemy import SQLAlchemy
 
-def connect_db():
+# Create SQLAlchemy instance
+db = SQLAlchemy()
 
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="car_rental_system"
-    )
 
-    return connection   
+# Optional helper function
+def init_database(app):
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = \
+        "mysql+pymysql://root:@localhost/car_rental_system"
+
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
