@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="renter">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriveLink — Sign In</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: var(--font-body); background: var(--clr-bg); color: var(--clr-text); margin: 0; overflow: hidden; }
+
+    .login-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+
+    /* Left Branding Pane */
+    .brand-pane {
+      position: relative;
+      background: var(--clr-bg-2);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3rem;
+      overflow: hidden;
+    }
+
+    .brand-pane::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 30% 40%, rgba(99,102,241,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(99,102,241,0.10) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .brand-pane::after {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      border: 1px solid rgba(99,102,241,0.1);
+      animation: spin 30s linear infinite;
+    }
+
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .brand-logo {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--clr-text);
+      position: relative;
+      z-index: 1;
+    }
+    .brand-logo span { color: var(--clr-primary); }
+
+    .brand-hero {
+      position: relative;
+      z-index: 1;
+    }
+
+    .car-visual {
+      font-size: 7rem;
+      display: block;
+      margin-bottom: 1.5rem;
+      animation: float 3.5s ease-in-out infinite;
+      filter: drop-shadow(0 20px 40px rgba(99,102,241,0.3));
+    }
+
+    .brand-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--clr-text);
+      margin-bottom: 1rem;
+    }
+
+    .brand-tagline .accent { color: var(--clr-primary); }
+
+    .brand-desc {
+      font-size: 0.95rem;
+      color: var(--clr-text-2);
+      max-width: 340px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .brand-stats {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .stat-item { text-align: left; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--clr-text);
+      line-height: 1;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--clr-text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .brand-footer {
+      font-size: 0.75rem;
+      color: var(--clr-text-3);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Right Form Pane */
+    .form-pane {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 4rem;
+      background: var(--clr-bg);
+      overflow-y: auto;
+    }
+
+    .form-inner { width: 100%; max-width: 380px; }
+
+    .form-header { margin-bottom: 2.5rem; }
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--clr-text);
+      margin-bottom: 0.4rem;
+    }
+    .form-subtitle { font-size: 0.875rem; color: var(--clr-text-2); }
+
+    .hint-box {
+      background: var(--clr-primary-muted);
+      border: 1px solid var(--clr-primary-border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      color: var(--clr-text-2);
+      margin-bottom: 1.5rem;
+    }
+
+    .hint-box strong { color: var(--clr-primary-light); font-family: var(--font-mono); }
+
+    .form-sep {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: var(--clr-text-3);
+      font-size: 0.8rem;
+    }
+    .form-sep::before, .form-sep::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid var(--clr-border);
+    }
+
+    .optional-tag {
+      font-size: 0.7rem;
+      color: var(--clr-text-3);
+      padding: 2px 8px;
+      background: var(--clr-bg-3);
+      border-radius: 99px;
+      margin-left: 6px;
+    }
+
+    /* Admin Challenge Overlay */
+    .challenge-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .challenge-box {
+      background: var(--clr-bg-2);
+      border: 1px solid rgba(220,38,38,0.3);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 0 80px rgba(220,38,38,0.15), var(--shadow-xl);
+      animation: pop-in 0.35s var(--ease-spring);
+    }
+
+    .challenge-icon {
+      width: 56px; height: 56px;
+      border-radius: var(--radius-md);
+      background: rgba(220,38,38,0.1);
+      border: 1px solid rgba(220,38,38,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .partner-link {
+      font-size: 0.8rem;
+      color: var(--clr-text-3);
+      text-align: center;
+      padding: 2rem 0 0;
+      border-top: 1px solid var(--clr-border);
+      margin-top: 2rem;
+    }
+
+    .partner-link a { color: var(--clr-primary-light); }
+
+    @media (max-width: 768px) {
+      .login-wrap { grid-template-columns: 1fr; }
+      .brand-pane { display: none; }
+      .form-pane { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body class="theme-renter">
+
+  <!-- Admin Challenge Overlay -->
+  <div class="challenge-overlay" id="adminChallenge">
+    <div class="challenge-box">
+      <div class="challenge-icon">🔐</div>
+      <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:800;margin-bottom:0.5rem;color:var(--clr-text)">
+        Admin Access Challenge
+      </h3>
+      <p style="font-size:0.875rem;color:var(--clr-text-2);margin-bottom:1.5rem;line-height:1.5">
+        Super Admin credentials detected. Enter your cryptographic Admin Access Key to proceed to the restricted operations dashboard.
+      </p>
+      <div class="form-group mb-4">
+        <label class="form-label">Admin Access Key</label>
+        <input type="password" id="adminKeyInput" class="form-input font-mono"
+          placeholder="DX-XXXX-XXXX" autocomplete="off" spellcheck="false">
+        <p id="challengeError" class="form-error" style="display:none"></p>
+      </div>
+      <button id="verifyAdminBtn" class="btn btn-danger btn-full">
+        <span>🔓</span> Verify & Unlock
+      </button>
+      <p class="text-xs text-muted mt-3" style="text-align:center">
+        Unauthorized access is monitored and logged.
+      </p>
+    </div>
+  </div>
+
+  <div class="login-wrap">
+
+    <!-- Left: Brand Pane -->
+    <div class="brand-pane">
+      <div class="grid-bg"></div>
+
+      <div class="brand-logo">DriveLink<span></span></div>
+
+      <div class="brand-hero">
+        <span class="car-visual">🚗</span>
+        <h1 class="brand-tagline">
+          The Future of<br>
+          <span class="accent">Car Rentals</span><br>
+          is Here.
+        </h1>
+        <p class="brand-desc">
+          Multi-tenant fleet management, seamless customer bookings, and real-time support — all in one beautifully crafted platform.
+        </p>
+        <div class="brand-stats">
+          <div class="stat-item">
+            <div class="stat-num">2</div>
+            <div class="stat-label">Partners</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">9</div>
+            <div class="stat-label">Vehicles</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Uptime</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-footer">
+        © 2025 DriveLink Platform · Enterprise Car Rental Solutions
+      </div>
+    </div>
+
+    <!-- Right: Form Pane -->
+    <div class="form-pane">
+      <div class="form-inner animate-fade-in">
+
+        <div class="form-header">
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
+            <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--clr-primary);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🚀</div>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--clr-text)">DriveLink</span>
+          </div>
+          <h2 class="form-title">Welcome back</h2>
+          <p class="form-subtitle">Sign in to your account to continue.</p>
+        </div>
+
+        <!-- Credential Hints -->
+        <div class="hint-box">
+          <p style="margin-bottom:0.4rem;font-weight:600;color:var(--clr-text)">🧪 Test Credentials</p>
+          <p><strong>Renter:</strong> maria@email.com / test123</p>
+          <p><strong>Horizon:</strong> carlos@horizon.com / horizon123 · Key: <strong>HORIZON</strong></p>
+          <p><strong>MetroGlide:</strong> ryan@metroglide.com / metro123 · Key: <strong>METROGLIDE</strong></p>
+          <p><strong>Admin:</strong> admin@drivelink.io / superadmin999 · AdminKey: <strong>DX-ADMIN-9F2A</strong></p>
+        </div>
+
+        <form id="loginForm" novalidate>
+
+          <!-- Tenant Key -->
+          <div class="form-group mb-4">
+            <label class="form-label" for="tenantKey">
+              Tenant Account Key
+              <span class="optional-tag">Blank if Renter</span>
+            </label>
+            <input
+              type="text"
+              id="tenantKey"
+              name="tenantKey"
+              class="form-input font-mono"
+              placeholder="e.g. HORIZON or METROGLIDE"
+              autocomplete="off"
+              spellcheck="false"
+              style="letter-spacing:0.08em;text-transform:uppercase"
+            >
+            <p class="form-hint">Corporate tenants must enter their assigned account key.</p>
+          </div>
+
+          <div class="form-sep">or continue as renter</div>
+
+          <!-- Email -->
+          <div class="form-group mb-4">
+            <label class="form-label" for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+          <!-- Password -->
+          <div class="form-group mb-5">
+            <label class="form-label" for="password">Password</label>
+            <div style="position:relative">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-input"
+                placeholder="••••••••••"
+                autocomplete="current-password"
+                required
+                style="padding-right:3rem"
+              >
+              <button type="button" id="togglePass"
+                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--clr-text-3);font-size:1rem;padding:0"
+                onclick="const p=document.getElementById('password');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'👁️':'🙈'"
+              >👁️</button>
+            </div>
+          </div>
+
+          <!-- Error -->
+          <p id="loginError" class="form-error mb-3" style="display:none"></p>
+
+          <!-- Submit -->
+          <button type="submit" id="loginBtn" class="btn btn-primary btn-full btn-lg">
+            Sign In to DriveLink
+          </button>
+
+        </form>
+
+        <div class="partner-link">
+          <p>Are you a fleet partner?
+            <a href="login.html">Access Business Portal</a>
+            using your Tenant Key above.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
