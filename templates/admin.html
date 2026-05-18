@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 — Page Not Found</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="style.css">
   <style>
     body { font-family: var(--font-body); background: var(--clr-bg); color: var(--clr-text); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
@@ -510,7 +510,7 @@
     </div>
   </template>
 
-  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="app.js"></script>
   <script>
     // Render the growth chart and tenant cards after DB is accessible
     document.addEventListener('DOMContentLoaded', () => {
