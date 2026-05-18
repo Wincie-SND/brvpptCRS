@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 — Page Not Found</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
   <style>
     body { font-family: var(--font-body); background: var(--clr-bg); color: var(--clr-text); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
