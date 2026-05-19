@@ -176,35 +176,35 @@ const DB = {
       brand: 'Toyota', model: 'Fortuner', year: 2023,
       category: 'SUV', transmission: 'Automatic', fuel: 'Diesel',
       pricePerDay: 4500, available: true, color: '#6366f1',
-      emoji: '🚙', plate: 'HRZ-001', seats: 7, mileage: 12000
+      image:'../static/images/tfortuner.jpg', plate: 'HRZ-001', seats: 7, mileage: 12000
     },
     {
       id: 'V002', tenant_id: 'T_HORIZON',
       brand: 'Honda', model: 'Civic', year: 2024,
       category: 'Sedan', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2800, available: true, color: '#8b5cf6',
-      emoji: '🚗', plate: 'HRZ-002', seats: 5, mileage: 5200
+      image:'../static/images/hcivic.jpg', plate: 'HRZ-002', seats: 5, mileage: 5200
     },
     {
       id: 'V003', tenant_id: 'T_HORIZON',
       brand: 'Mitsubishi', model: 'Montero Sport', year: 2022,
       category: 'SUV', transmission: 'Manual', fuel: 'Diesel',
       pricePerDay: 3900, available: false, color: '#06b6d4',
-      emoji: '🏔️', plate: 'HRZ-003', seats: 7, mileage: 38000
+      image:'../static/images/tmonterosport.jpg', plate: 'HRZ-003', seats: 7, mileage: 38000
     },
     {
       id: 'V004', tenant_id: 'T_HORIZON',
       brand: 'Ford', model: 'Ranger', year: 2023,
       category: 'Pickup', transmission: 'Automatic', fuel: 'Diesel',
       pricePerDay: 4200, available: true, color: '#f59e0b',
-      emoji: '🛻', plate: 'HRZ-004', seats: 5, mileage: 18500
+      image:'../static/images/franger.jpg', plate: 'HRZ-004', seats: 5, mileage: 18500
     },
     {
       id: 'V005', tenant_id: 'T_HORIZON',
       brand: 'Mazda', model: 'CX-5', year: 2024,
       category: 'SUV', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 3600, available: true, color: '#ef4444',
-      emoji: '🚐', plate: 'HRZ-005', seats: 5, mileage: 3100
+      image:'../static/images/mcx-5.jpg  ', plate: 'HRZ-005', seats: 5, mileage: 3100
     },
     // MetroGlide Fleet
     {
@@ -212,28 +212,28 @@ const DB = {
       brand: 'Toyota', model: 'Vios', year: 2023,
       category: 'Sedan', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2200, available: true, color: '#10b981',
-      emoji: '🚕', plate: 'MTG-001', seats: 5, mileage: 22000
+      image:'../static/images/tvios.jpg', plate: 'MTG-001', seats: 5, mileage: 22000
     },
     {
       id: 'V007', tenant_id: 'T_METRO',
       brand: 'Honda', model: 'BR-V', year: 2022,
       category: 'SUV', transmission: 'CVT', fuel: 'Gasoline',
       pricePerDay: 2900, available: true, color: '#14b8a6',
-      emoji: '🚙', plate: 'MTG-002', seats: 7, mileage: 41000
+      image:'../static/images/hbr-v.jpg', plate: 'MTG-002', seats: 7, mileage: 41000
     },
     {
       id: 'V008', tenant_id: 'T_METRO',
       brand: 'Suzuki', model: 'Ertiga', year: 2023,
       category: 'Van', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2600, available: false, color: '#0ea5e9',
-      emoji: '🚌', plate: 'MTG-003', seats: 7, mileage: 15700
+      image:'../static/images/sertiga.jpg', plate: 'MTG-003', seats: 7, mileage: 15700
     },
     {
       id: 'V009', tenant_id: 'T_METRO',
       brand: 'Geely', model: 'Coolray', year: 2024,
       category: 'SUV', transmission: 'DCT', fuel: 'Gasoline',
       pricePerDay: 3100, available: true, color: '#6366f1',
-      emoji: '🏎️', plate: 'MTG-004', seats: 5, mileage: 8900
+      image:'../static/images/gcoolray.jpg', plate: 'MTG-004', seats: 5, mileage: 8900
     }
   ],
 
