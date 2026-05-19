@@ -1,5 +1,42 @@
 'use strict';
 
+const loginForm = document.getElementById("loginForm");
+
+if(loginForm){
+    loginForm.addEventListener("submit", function(e){
+        e.preventDefault();
+
+        const tenantKey = document.getElementById("tenantKey").value.trim().toUpperCase();
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+        const password = document.getElementById("loginPassword").value.trim();
+
+        console.log("Tenant:", tenantKey);
+        console.log("Email:", email);
+        console.log("Password:", password);
+
+        if(email === "maria@email.com" && password === "test123"){
+            window.location.replace("index.html");
+            return;
+        }
+
+        if(email === "carlos@horizon.com" && password === "horizon123" && tenantKey === "HORIZON"){
+            window.location.href = "tenant.html";
+            return; 
+        }
+
+        if(email === "ryan@metroglide.com" && password === "metro123" && tenantKey === "METROGLIDE"){
+            window.location.href = "tenant.html";
+            return;
+        }
+
+        if(email === "admin@drivelink.io" && password === "superadmin999"){
+            window.location.href = "admin.html";
+            return;
+        }
+
+        alert("Invalid login credentials");
+    });
+}
 
 const DB = {
 
@@ -119,6 +156,7 @@ const DB = {
     // Super Admin
     {
       id: 'U999',
+      key: 'DX-ADMIN-9F2A',
       name: 'Admin Root',
       email: 'admin@drivelink.io',
       password: 'superadmin999',
@@ -604,88 +642,83 @@ const UI = {
 // ─────────────────────────────────────────────
 
 function initLoginPage() {
-  // Already logged in? Redirect
+
   const session = Session.get();
+
   if (session) {
-    if (session.role === 'renter') window.location.href = 'index.html';
-    else if (session.role === 'super_admin') window.location.href = 'admin.html';
-    else window.location.href = 'portal.html';
-    return;
-  }
 
-  const form     = document.getElementById('loginForm');
-  const errorEl  = document.getElementById('loginError');
-  const tenantEl = document.getElementById('tenantKey');
-  const emailEl  = document.getElementById('email');
-  const passEl   = document.getElementById('password');
-  const btnEl    = document.getElementById('loginBtn');
-  const challengeOverlay = document.getElementById('adminChallenge');
-  const challengeInput   = document.getElementById('adminKeyInput');
-  const challengeBtn     = document.getElementById('verifyAdminBtn');
-  const challengeError   = document.getElementById('challengeError');
-
-  if (!form) return;
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    UI.clearError(errorEl);
-
-    const email = emailEl.value.trim();
-    const password = passEl.value.trim();
-    const tenantKey = tenantEl.value.trim();
-
-    if (!email || !password) {
-      UI.showError(errorEl, 'Email and password are required.');
+    if (session.role === 'renter') {
+      window.location.replace('index.html');
       return;
     }
 
-    btnEl.disabled = true;
-    btnEl.textContent = 'Authenticating…';
+    if (session.role === 'super_admin') {
+      window.location.replace(
+        'admin.html?key=' + Session.ADMIN_SECRET_KEY
+      );
+      return;
+    }
 
-    setTimeout(() => {
-      const result = Auth.login(email, password, tenantKey);
+    if (
+      session.role === 'tenant_admin' ||
+      session.role === 'tenant_staff'
+    ) {
 
-      if (!result.success) {
-        UI.showError(errorEl, result.error);
-        btnEl.disabled = false;
-        btnEl.textContent = 'Sign In';
-        return;
-      }
+      window.location.replace('portal.html');
+      return;
+    }
+  }
 
-      if (result.requiresChallenge) {
-        btnEl.disabled = false;
-        btnEl.textContent = 'Sign In';
-        challengeOverlay.style.display = 'flex';
-        challengeInput.focus();
-        return;
-      }
+  const form = document.getElementById('loginForm');
 
-      window.location.href = result.redirect;
-    }, 600);
+  if (!form) return;
+
+  form.addEventListener('submit', function(e){
+
+    e.preventDefault();
+
+    const tenantKey =
+      document.getElementById('tenantKey')
+      .value.trim()
+      .toUpperCase();
+
+    const email =
+      document.getElementById('loginEmail')
+      .value.trim()
+      .toLowerCase();
+
+    const password =
+      document.getElementById('loginPassword')
+      .value.trim();
+
+    const result =
+      Auth.login(email,password,tenantKey);
+
+    if(!result.success){
+      alert(result.error);
+      return;
+    }
+
+    if(result.requiresChallenge){
+
+      Session.setAdminKey(
+        Session.ADMIN_SECRET_KEY
+      );
+
+      window.location.replace(
+        'admin.html?key=' +
+        Session.ADMIN_SECRET_KEY
+      );
+
+      return;
+    }
+
+    window.location.replace(
+      result.redirect
+    );
+
   });
 
-  // Admin key challenge
-  if (challengeBtn) {
-    challengeBtn.addEventListener('click', function() {
-      UI.clearError(challengeError);
-      const key = challengeInput.value.trim();
-      if (!key) { UI.showError(challengeError, 'Please enter the Admin Access Key.'); return; }
-
-      if (Auth.verifyAdminKey(key)) {
-        window.location.href = 'admin.html?key=' + key;
-      } else {
-        UI.showError(challengeError, 'Invalid Admin Access Key. Access denied.');
-        challengeInput.value = '';
-        challengeInput.focus();
-      }
-    });
-  }
-
-  if (challengeInput) {
-    challengeInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') challengeBtn.click();
-    });
-  }
 }
 
 // ─────────────────────────────────────────────

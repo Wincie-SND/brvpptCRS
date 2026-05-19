@@ -17,7 +17,8 @@ body{
     135deg,
     #0d0d18,
     #121227,
-    #0b0b13);
+    #0b0b13
+    );
 
     padding:60px;
 
@@ -75,6 +76,8 @@ footer{
 }
 
 .login-panel{
+    width:100%;
+    max-width:700px;
 
     padding:70px;
 
@@ -109,20 +112,20 @@ footer{
     color:#b7b7d2;
 }
 
-label{
+/* only form styles */
+
+.login-form label{
     display:block;
-    margin-top:20px;
-    margin-bottom:8px;
+    margin-top:24px;
+    margin-bottom:10px;
 }
 
-input{
+.login-form input{
     width:100%;
-
     height:68px;
 
     padding:0 24px;
 
-    margin-top:10px;
     margin-bottom:24px;
 
     background:#11111c;
@@ -142,6 +145,19 @@ input{
     transition:.25s;
 }
 
+.login-form input:focus{
+
+    border-color:#7066ff;
+
+    box-shadow:
+    0 0 0 4px
+    rgba(112,102,255,.15);
+}
+
+.login-form input::placeholder{
+    color:#777a93;
+}
+
 .divider{
     margin:25px 0;
     text-align:center;
@@ -151,6 +167,7 @@ input{
 .signin-btn{
 
     width:100%;
+
     margin-top:30px;
 
     border:none;
