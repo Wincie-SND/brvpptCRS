@@ -1,182 +1,169 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="renter">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DriveLink — Sign In</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="..\static\css\style.css">
-  <link rel="stylesheet" href="..\static\css\admin.css">
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveLink — Sign In</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/login.css">
 </head>
-<body class="theme-renter">
 
-  <!-- Admin Challenge Overlay -->
-  <div class="challenge-overlay" id="adminChallenge">
-    <div class="challenge-box">
-      <div class="challenge-icon">🔐</div>
-      <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:800;margin-bottom:0.5rem;color:var(--clr-text)">
-        Admin Access Challenge
-      </h3>
-      <p style="font-size:0.875rem;color:var(--clr-text-2);margin-bottom:1.5rem;line-height:1.5">
-        Super Admin credentials detected. Enter your cryptographic Admin Access Key to proceed to the restricted operations dashboard.
-      </p>
-      <div class="form-group mb-4">
-        <label class="form-label">Admin Access Key</label>
-        <input type="password" id="adminKeyInput" class="form-input font-mono"
-          placeholder="DX-XXXX-XXXX" autocomplete="off" spellcheck="false">
-        <p id="challengeError" class="form-error" style="display:none"></p>
-      </div>
-      <button id="verifyAdminBtn" class="btn btn-danger btn-full">
-        <span>🔓</span> Verify & Unlock
-      </button>
-      <p class="text-xs text-muted mt-3" style="text-align:center">
-        Unauthorized access is monitored and logged.
-      </p>
-    </div>
-  </div>
+<body>
 
-  <div class="login-wrap">
+<div class="login-wrap">
 
-    <!-- Left: Brand Pane -->
-    <div class="brand-pane">
-      <div class="grid-bg"></div>
+    <!-- LEFT PANEL -->
+    <section class="brand-pane">
 
-      <div class="brand-logo">DriveLink<span></span></div>
-
-      <div class="brand-hero">
-        <span class="car-visual">🚗</span>
-        <h1 class="brand-tagline">
-          The Future of<br>
-          <span class="accent">Car Rentals</span><br>
-          is Here.
-        </h1>
-        <p class="brand-desc">
-          Multi-tenant fleet management, seamless customer bookings, and real-time support — all in one beautifully crafted platform.
-        </p>
-        <div class="brand-stats">
-          <div class="stat-item">
-            <div class="stat-num">2</div>
-            <div class="stat-label">Partners</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-num">9</div>
-            <div class="stat-label">Vehicles</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-num">100%</div>
-            <div class="stat-label">Uptime</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="brand-footer">
-        © 2025 DriveLink Platform · Enterprise Car Rental Solutions
-      </div>
-    </div>
-
-    <!-- Right: Form Pane -->
-    <div class="form-pane">
-      <div class="form-inner animate-fade-in">
-
-        <div class="form-header">
-          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
-            <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--clr-primary);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🚀</div>
-            <span style="font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--clr-text)">DriveLink</span>
-          </div>
-          <h2 class="form-title">Welcome back</h2>
-          <p class="form-subtitle">Sign in to your account to continue.</p>
+        <div class="brand-logo">
+            Drive<span>Link</span>
         </div>
 
-        <!-- Credential Hints -->
-        <div class="hint-box">
-          <p style="margin-bottom:0.4rem;font-weight:600;color:var(--clr-text)">🧪 Test Credentials</p>
-          <p><strong>Renter:</strong> maria@email.com / test123</p>
-          <p><strong>Horizon:</strong> carlos@horizon.com / horizon123 · Key: <strong>HORIZON</strong></p>
-          <p><strong>MetroGlide:</strong> ryan@metroglide.com / metro123 · Key: <strong>METROGLIDE</strong></p>
-          <p><strong>Admin:</strong> admin@drivelink.io / superadmin999 · AdminKey: <strong>DX-ADMIN-9F2A</strong></p>
-        </div>
+        <div class="hero-content">
 
-        <form id="loginForm" novalidate>
-
-          <!-- Tenant Key -->
-          <div class="form-group mb-4">
-            <label class="form-label" for="tenantKey">
-              Tenant Account Key
-              <span class="optional-tag">Blank if Renter</span>
-            </label>
-            <input
-              type="text"
-              id="tenantKey"
-              name="tenantKey"
-              class="form-input font-mono"
-              placeholder="e.g. HORIZON or METROGLIDE"
-              autocomplete="off"
-              spellcheck="false"
-              style="letter-spacing:0.08em;text-transform:uppercase"
-            >
-            <p class="form-hint">Corporate tenants must enter their assigned account key.</p>
-          </div>
-
-          <div class="form-sep">or continue as renter</div>
-
-          <!-- Email -->
-          <div class="form-group mb-4">
-            <label class="form-label" for="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              class="form-input"
-              placeholder="you@example.com"
-              autocomplete="email"
-              required
-            >
-          </div>
-
-          <!-- Password -->
-          <div class="form-group mb-5">
-            <label class="form-label" for="password">Password</label>
-            <div style="position:relative">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                class="form-input"
-                placeholder="••••••••••"
-                autocomplete="current-password"
-                required
-                style="padding-right:3rem"
-              >
-              <button type="button" id="togglePass"
-                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--clr-text-3);font-size:1rem;padding:0"
-                onclick="const p=document.getElementById('password');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'👁️':'🙈'"
-              >👁️</button>
+            <div class="hero-icon">
+                🚗
             </div>
-          </div>
 
-          <!-- Error -->
-          <p id="loginError" class="form-error mb-3" style="display:none"></p>
+            <h1>
+                The Future of
+                <span>Car Rentals</span>
+                is Here.
+            </h1>
 
-          <!-- Submit -->
-          <button type="submit" id="loginBtn" class="btn btn-primary btn-full btn-lg">
+            <p>
+                Multi-tenant fleet management, seamless customer bookings,
+                and real-time support — all in one beautifully crafted platform.
+            </p>
+
+            <div class="stats">
+
+                <div class="stat">
+                    <h3>2</h3>
+                    <span>Partners</span>
+                </div>
+
+                <div class="stat">
+                    <h3>9</h3>
+                    <span>Vehicles</span>
+                </div>
+
+                <div class="stat">
+                    <h3>100%</h3>
+                    <span>Uptime</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <footer>
+            © 2025 DriveLink Platform · Enterprise Car Rental Solutions
+        </footer>
+
+    </section>
+
+
+    <!-- RIGHT PANEL -->
+
+    <section class="login-panel">
+
+        <div class="panel-logo">
+            🚀 DriveLink
+        </div>
+
+        <h2>Welcome back</h2>
+
+        <p class="subtitle">
+            Sign in to your account to continue.
+        </p>
+
+        <div class="credentials-box">
+
+            <h4>🧪 Test Credentials</h4>
+
+            <p>
+                Renter:
+                maria@email.com / test123
+            </p>
+
+            <p>
+                Horizon:
+                carlos@horizon.com / horizon123
+            </p>
+
+            <p>
+                MetroGlide:
+                ryan@metroglide.com / metro123
+            </p>
+
+            <p>
+                Admin:
+                admin@drivelink.io / superadmin999
+            </p>
+
+        </div>
+
+        <form id="loginForm">
+
+            <label>
+                TENANT ACCOUNT KEY
+            </label>
+
+            <input
+            type="text"
+            placeholder="E.G. HORIZON OR METROGLIDE">
+
+
+            <div class="divider">
+                <span>or continue as renter</span>
+            </div>
+
+
+            <label>Email Address</label>
+
+            <input
+            type="email"
+            placeholder="you@example.com">
+
+
+            <label>Password</label>
+
+            <input
+            type="password"
+            placeholder="••••••••••">
+
+
+            <button
+            type="submit"
+            class="signin-btn">
+
             Sign In to DriveLink
-          </button>
+
+            </button>
 
         </form>
 
-        <div class="partner-link">
-          <p>Are you a fleet partner?
-            <a href="login.html">Access Business Portal</a>
-            using your Tenant Key above.
-          </p>
+        <div class="portal-link">
+
+            Are you a fleet partner?
+
+            <a href="portal.html">
+
+            Access Business Portal
+
+            </a>
+
         </div>
 
-      </div>
-    </div>
+    </section>
 
-  </div>
+</div>
 
-  <script src="../static/js/app.js"></script>
+<script src="../static/js/app.js"></script>
+
 </body>
 </html>
