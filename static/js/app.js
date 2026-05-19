@@ -176,35 +176,35 @@ const DB = {
       brand: 'Toyota', model: 'Fortuner', year: 2023,
       category: 'SUV', transmission: 'Automatic', fuel: 'Diesel',
       pricePerDay: 4500, available: true, color: '#6366f1',
-      image:'../static/images/tfortuner.jpg', plate: 'HRZ-001', seats: 7, mileage: 12000
+      image:'../static/images/tfortuner.png', plate: 'HRZ-001', seats: 7, mileage: 12000
     },
     {
       id: 'V002', tenant_id: 'T_HORIZON',
       brand: 'Honda', model: 'Civic', year: 2024,
       category: 'Sedan', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2800, available: true, color: '#8b5cf6',
-      image:'../static/images/hcivic.jpg', plate: 'HRZ-002', seats: 5, mileage: 5200
+      image:'../static/images/hcivic.png', plate: 'HRZ-002', seats: 5, mileage: 5200
     },
     {
       id: 'V003', tenant_id: 'T_HORIZON',
       brand: 'Mitsubishi', model: 'Montero Sport', year: 2022,
       category: 'SUV', transmission: 'Manual', fuel: 'Diesel',
       pricePerDay: 3900, available: false, color: '#06b6d4',
-      image:'../static/images/tmonterosport.jpg', plate: 'HRZ-003', seats: 7, mileage: 38000
+      image:'../static/images/tmonterosport.png', plate: 'HRZ-003', seats: 7, mileage: 38000
     },
     {
       id: 'V004', tenant_id: 'T_HORIZON',
       brand: 'Ford', model: 'Ranger', year: 2023,
       category: 'Pickup', transmission: 'Automatic', fuel: 'Diesel',
       pricePerDay: 4200, available: true, color: '#f59e0b',
-      image:'../static/images/franger.jpg', plate: 'HRZ-004', seats: 5, mileage: 18500
+      image:'../static/images/franger.png', plate: 'HRZ-004', seats: 5, mileage: 18500
     },
     {
       id: 'V005', tenant_id: 'T_HORIZON',
       brand: 'Mazda', model: 'CX-5', year: 2024,
       category: 'SUV', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 3600, available: true, color: '#ef4444',
-      image:'../static/images/mcx-5.jpg  ', plate: 'HRZ-005', seats: 5, mileage: 3100
+      image:'../static/images/mcx-5.png  ', plate: 'HRZ-005', seats: 5, mileage: 3100
     },
     // MetroGlide Fleet
     {
@@ -212,28 +212,28 @@ const DB = {
       brand: 'Toyota', model: 'Vios', year: 2023,
       category: 'Sedan', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2200, available: true, color: '#10b981',
-      image:'../static/images/tvios.jpg', plate: 'MTG-001', seats: 5, mileage: 22000
+      image:'../static/images/tvios.png', plate: 'MTG-001', seats: 5, mileage: 22000
     },
     {
       id: 'V007', tenant_id: 'T_METRO',
       brand: 'Honda', model: 'BR-V', year: 2022,
       category: 'SUV', transmission: 'CVT', fuel: 'Gasoline',
       pricePerDay: 2900, available: true, color: '#14b8a6',
-      image:'../static/images/hbr-v.jpg', plate: 'MTG-002', seats: 7, mileage: 41000
+      image:'../static/images/hbr-v.png', plate: 'MTG-002', seats: 7, mileage: 41000
     },
     {
       id: 'V008', tenant_id: 'T_METRO',
       brand: 'Suzuki', model: 'Ertiga', year: 2023,
       category: 'Van', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2600, available: false, color: '#0ea5e9',
-      image:'../static/images/sertiga.jpg', plate: 'MTG-003', seats: 7, mileage: 15700
+      image:'../static/images/sertiga.png', plate: 'MTG-003', seats: 7, mileage: 15700
     },
     {
       id: 'V009', tenant_id: 'T_METRO',
       brand: 'Geely', model: 'Coolray', year: 2024,
       category: 'SUV', transmission: 'DCT', fuel: 'Gasoline',
       pricePerDay: 3100, available: true, color: '#6366f1',
-      image:'../static/images/gcoolray.jpg', plate: 'MTG-004', seats: 5, mileage: 8900
+      image:'../static/images/gcoolray.png', plate: 'MTG-004', seats: 5, mileage: 8900
     }
   ],
 
@@ -774,50 +774,97 @@ function renderMarketplace(filters = {}) {
   if (!grid) return;
 
   const vehicles = DataStore.getVehicles(null, filters);
-  grid.innerHTML = '';
 
-  if (!vehicles.length) {
-    grid.innerHTML = `<div class="animate-fade-in" style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--clr-text-3)">
-      <div style="font-size:3rem;margin-bottom:1rem">🔍</div>
-      <p>No vehicles match your filters.</p>
-    </div>`;
+  grid.innerHTML='';
+
+  if(!vehicles.length){
+    grid.innerHTML=`
+      <div style="
+      grid-column:1/-1;
+      text-align:center;
+      padding:4rem;">
+      No vehicles found
+      </div>
+    `;
     return;
   }
 
-  vehicles.forEach((v, i) => {
-    const tenant = DataStore.getTenantById(v.tenant_id);
-    const card = document.createElement('div');
-    card.className = 'vehicle-card animate-fade-in';
-    card.style.animationDelay = `${i * 0.07}s`;
-    card.innerHTML = `
-      <div class="vehicle-img">${v.emoji}
-        <div style="position:absolute;top:12px;right:12px">${UI.availabilityBadge(v.available)}</div>
-        <div style="position:absolute;top:12px;left:12px">
-          <span class="badge badge-neutral" style="font-size:0.68rem">${v.category}</span>
-        </div>
-      </div>
-      <div class="vehicle-body">
-        <div class="flex items-center justify-between mb-1">
-          <h4 style="font-size:1rem">${v.brand} ${v.model}</h4>
-          <span class="text-xs text-muted font-mono">${v.year}</span>
-        </div>
-        <p class="text-xs text-muted mb-3">${tenant ? tenant.name : 'DriveLink Fleet'}</p>
-        <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
-          <span class="badge badge-neutral">⚙️ ${v.transmission}</span>
-          <span class="badge badge-neutral">⛽ ${v.fuel}</span>
-          <span class="badge badge-neutral">💺 ${v.seats} seats</span>
-        </div>
-        <hr class="divider">
-        <div class="flex items-center justify-between mt-3">
-          <div class="vehicle-price">${UI.formatCurrency(v.pricePerDay)}<sub>/day</sub></div>
-          <button class="btn btn-primary btn-sm" onclick="handleBooking('${v.id}')" ${!v.available ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>
-            ${v.available ? 'Book Now' : 'Unavailable'}
-          </button>
-        </div>
-      </div>
-    `;
+  vehicles.forEach((v,i)=>{
+
+    const tenant=
+      DataStore.getTenantById(v.tenant_id);
+
+    const card=document.createElement('div');
+
+    card.className=
+      'vehicle-card animate-fade-in';
+
+    card.style.animationDelay=
+      `${i*0.07}s`;
+
+card.innerHTML=`
+
+<div class="vehicle-img">
+  <img
+    src="${v.image || '../static/images/default-car.jpg'}"
+    class="vehicle-photo"
+    alt="${v.brand} ${v.model}"
+    onerror="this.src='../static/images/default-car.jpg'">
+</div>
+
+<div class="vehicle-body">
+
+  <div class="flex items-center justify-between mb-2">
+    <span class="badge badge-neutral">
+      ${v.category}
+    </span>
+
+    ${UI.availabilityBadge(v.available)}
+  </div>
+
+  <div class="flex items-center justify-between mb-1">
+    <h4 style="font-size:1rem">
+      ${v.brand} ${v.model}
+    </h4>
+
+    <span class="text-xs text-muted font-mono">
+      ${v.year}
+    </span>
+  </div>
+
+  <p class="text-xs text-muted mb-3">
+    ${tenant ? tenant.name : 'DriveLink Fleet'}
+  </p>
+
+  <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
+    <span class="badge badge-neutral">⚙️ ${v.transmission}</span>
+    <span class="badge badge-neutral">⛽ ${v.fuel}</span>
+    <span class="badge badge-neutral">💺 ${v.seats} seats</span>
+  </div>
+
+  <hr class="divider">
+
+  <div class="flex items-center justify-between mt-3">
+    <div class="vehicle-price">
+      ${UI.formatCurrency(v.pricePerDay)}
+      <sub>/day</sub>
+    </div>
+
+    <button
+      class="btn btn-primary btn-sm"
+      onclick="handleBooking('${v.id}')"
+      ${!v.available ? 'disabled style="opacity:.4"' : ''}>
+      ${v.available ? 'Book Now' : 'Unavailable'}
+    </button>
+  </div>
+
+</div>
+`;
+
     grid.appendChild(card);
+
   });
+
 }
 
 function initFilters() {
@@ -1080,17 +1127,62 @@ function renderPortalFleet(tenantId) {
   const vehicles = DataStore.getVehicles(tenantId);
   fleetEl.innerHTML = vehicles.map(v => `
     <div class="vehicle-card animate-fade-in">
-      <div class="vehicle-img">${v.emoji}
-        <div style="position:absolute;top:12px;right:12px">${UI.availabilityBadge(v.available)}</div>
-      </div>
-      <div class="vehicle-body">
-        <h4 class="mb-1">${v.brand} ${v.model} <span class="text-xs text-muted font-mono">${v.year}</span></h4>
-        <p class="text-xs text-muted mb-2">Plate: <span class="font-mono">${v.plate}</span> · ${v.mileage.toLocaleString()} km</p>
-        <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
-          <span class="badge badge-neutral">⚙️ ${v.transmission}</span>
-          <span class="badge badge-neutral">⛽ ${v.fuel}</span>
-          <span class="badge badge-neutral">💺 ${v.seats}</span>
-        </div>
+<div class="vehicle-img">
+
+    <img
+    src="${v.image || '../static/images/default-car.jpg'}"
+    class="vehicle-photo"
+    alt="${v.brand} ${v.model}"
+    onerror="this.src='../static/images/default-car.jpg'">
+
+    <div class="vehicle-labels">
+
+        <span class="badge badge-neutral">
+            ${v.category}
+        </span>
+
+        ${UI.availabilityBadge(v.available)}
+
+    </div>
+
+</div>
+
+<div class="vehicle-body">
+
+    <h4 class="mb-1">
+        ${v.brand} ${v.model}
+
+        <span class="text-xs text-muted font-mono">
+        ${v.year}
+        </span>
+
+    </h4>
+
+    <p class="text-xs text-muted mb-2">
+    Plate:
+    <span class="font-mono">
+    ${v.plate}
+    </span>
+
+    · ${v.mileage.toLocaleString()} km
+    </p>
+
+    <div class="flex gap-2 mb-3"
+    style="flex-wrap:wrap">
+
+        <span class="badge badge-neutral">
+        ⚙️ ${v.transmission}
+        </span>
+
+        <span class="badge badge-neutral">
+        ⛽ ${v.fuel}
+        </span>
+
+        <span class="badge badge-neutral">
+        💺 ${v.seats}
+        </span>
+
+    </div>
         <div class="vehicle-price">${UI.formatCurrency(v.pricePerDay)}<sub>/day</sub></div>
       </div>
     </div>
