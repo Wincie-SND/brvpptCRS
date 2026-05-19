@@ -1,5 +1,5 @@
 /* ============================================================
-   DRIVEX — app.js
+   DRIVELINK — app.js
    Mock Database · Auth Engine · Session Logic · Chat State
    ============================================================ */
 
@@ -128,7 +128,7 @@ const DB = {
     {
       id: 'U999',
       name: 'Admin Root',
-      email: 'admin@drivex.io',
+      email: 'admin@drivelink.io',
       password: 'superadmin999',
       role: 'super_admin',
       tenant_id: null,
@@ -314,26 +314,26 @@ const Session = {
   ADMIN_SECRET_KEY: 'DX-ADMIN-9F2A',
 
   set(data) {
-    sessionStorage.setItem('drivex_session', JSON.stringify(data));
+    sessionStorage.setItem('drivelink_session', JSON.stringify(data));
   },
 
   get() {
     try {
-      return JSON.parse(sessionStorage.getItem('drivex_session')) || null;
+      return JSON.parse(sessionStorage.getItem('drivelink_session')) || null;
     } catch { return null; }
   },
 
   clear() {
-    sessionStorage.removeItem('drivex_session');
-    sessionStorage.removeItem('drivex_admin_key');
+    sessionStorage.removeItem('drivelink_session');
+    sessionStorage.removeItem('drivelink_admin_key');
   },
 
   setAdminKey(key) {
-    sessionStorage.setItem('drivex_admin_key', key);
+    sessionStorage.setItem('drivelink_admin_key', key);
   },
 
   getAdminKey() {
-    return sessionStorage.getItem('drivex_admin_key');
+    return sessionStorage.getItem('drivelink_admin_key');
   },
 
   isLoggedIn() { return this.get() !== null; },
@@ -776,7 +776,7 @@ function renderMarketplace(filters = {}) {
           <h4 style="font-size:1rem">${v.brand} ${v.model}</h4>
           <span class="text-xs text-muted font-mono">${v.year}</span>
         </div>
-        <p class="text-xs text-muted mb-3">${tenant ? tenant.name : 'DriveX Fleet'}</p>
+        <p class="text-xs text-muted mb-3">${tenant ? tenant.name : 'DriveLink Fleet'}</p>
         <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
           <span class="badge badge-neutral">⚙️ ${v.transmission}</span>
           <span class="badge badge-neutral">⛽ ${v.fuel}</span>
