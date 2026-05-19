@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2026 at 04:01 PM
+-- Generation Time: May 20, 2026 at 01:27 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -133,6 +133,7 @@ CREATE TABLE `users` (
   `tenant_id` int(11) DEFAULT NULL,
   `fullname` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `role` enum('admin','customer','tenant') DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -143,12 +144,12 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `tenant_id`, `fullname`, `email`, `password`, `role`, `created_at`, `admin_key`) VALUES
-(1, 1, 'Admin', 'admin@gmail.com', 'admin123', 'admin', '2026-05-17 18:17:55', NULL),
-(2, NULL, 'Maria Renter', 'maria@email.com', 'test123', 'customer', '2026-05-17 18:25:46', NULL),
-(3, 2, 'Carlos Horizon', 'carlos@horizon.com', 'horizon123', 'tenant', '2026-05-17 18:25:46', 'HORIZON'),
-(4, 3, 'Ryan MetroGlide', 'ryan@metroglide.com', 'metro123', 'tenant', '2026-05-17 18:25:46', 'METROGLIDE'),
-(6, NULL, 'Super Admin', 'admin@drivelink.io', 'superadmin999', 'admin', '2026-05-17 18:52:31', 'DX-ADMIN-9F2A');
+INSERT INTO `users` (`user_id`, `tenant_id`, `fullname`, `email`, `address`, `password`, `role`, `created_at`, `admin_key`) VALUES
+(1, 1, 'Admin', 'admin@gmail.com', 'Cebu City', 'admin123', 'admin', '2026-05-17 18:17:55', NULL),
+(2, NULL, 'Maria Renter', 'maria@email.com', 'Mandaue City', 'test123', 'customer', '2026-05-17 18:25:46', NULL),
+(3, 2, 'Carlos Horizon', 'carlos@horizon.com', 'Lapu-Lapu City', 'horizon123', 'tenant', '2026-05-17 18:25:46', NULL),
+(4, 3, 'Ryan MetroGlide', 'ryan@metroglide.com', 'Talisay City', 'metro123', 'tenant', '2026-05-17 18:25:46', NULL),
+(6, NULL, 'Super Admin', 'admin@drivelink.io', NULL, 'superadmin999', 'admin', '2026-05-17 18:52:31', 'DX-ADMIN-9F2A');
 
 -- --------------------------------------------------------
 

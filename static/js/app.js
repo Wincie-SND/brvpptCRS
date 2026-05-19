@@ -759,6 +759,7 @@ function initIndexPage() {
           window.location.href = 'login.html';
         } else {
           renderAccountView(session);
+          loadProfile();
         }
       }
     });
@@ -923,8 +924,13 @@ function renderAccountView(session) {
       return `
         <div class="glass-card p-4 mb-3 animate-fade-in">
           <div class="flex items-center gap-3">
-            <div style="font-size:2rem">${v ? v.emoji : '🚗'}</div>
-            <div class="flex-1">
+            <div class="rental-img">
+              <img
+                src="${v?.image || '../static/images/default-car.jpg'}"
+                  alt="${v ? v.brand + ' ' + v.model : 'Vehicle'}"
+                      onerror="this.src='../static/images/default-car.jpg'">
+              </div>            
+              <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
                 <h4 style="font-size:0.95rem">${v ? v.brand + ' ' + v.model : 'Vehicle'}</h4>
                 ${UI.statusBadge(b.status)}
@@ -978,6 +984,25 @@ function renderAccountView(session) {
       chatList.appendChild(btn);
     });
   }
+}
+
+function loadProfile(){
+
+    const session = Session.get();
+
+    if(!session) return;
+
+    document.getElementById("profileName").value =
+    session.name || "";
+
+    document.getElementById("profileEmail").value =
+    session.email || "";
+
+    document.getElementById("profilePhone").value =
+    session.phone || "";
+
+    document.getElementById("profileAddress").value =
+    session.address || "";
 }
 
 function renderUserChat(chatId) {

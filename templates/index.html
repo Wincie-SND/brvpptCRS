@@ -16,6 +16,7 @@
     <div class="nav-brand">Drive<span>Link</span></div>
     <div class="nav-links">
       <button class="nav-link active" data-view="market">🏪 Marketplace</button>
+      <button class="nav-btn" data-view="chat">💬 Chats</button>
       <button class="nav-link" data-view="account">👤 My Account</button>
 
       <!-- Guest state -->
@@ -160,9 +161,44 @@
     </div>
   </div>
 
-  <!-- ─── ACCOUNT VIEW ─── -->
-  <div id="viewAccount" style="display:none">
+<!-- ─── ACCOUNT VIEW ─── -->
+<div id="viewAccount" style="display:none">
+
     <div class="account-grid">
+
+        <div class="card">
+
+            <h2>My Profile</h2>
+
+            <form id="profileForm" class="profile-form">
+
+                <label>Full Name</label>
+               <input id="profileName" type="text">
+
+                <label>Gmail</label>
+                <input id="profileEmail" type="email">
+
+                <label>Phone Number</label>
+                <input id="profilePhone" type="text">
+
+                <label>Address</label>
+                <input id="profileAddress" type="text">
+
+                <button
+                type="submit"
+                class="btn btn-primary">
+
+                Save Changes
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
 
       <!-- Left: Profile + Bookings -->
       <div>

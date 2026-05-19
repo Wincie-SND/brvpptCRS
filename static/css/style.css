@@ -934,3 +934,26 @@ code, .mono { font-family: var(--font-mono); }
 
     transform:translateY(-10px);
 }
+
+.profile-form{
+display:flex;
+flex-direction:column;
+gap:16px;
+}
+
+.profile-form input{
+height:56px;
+padding:0 20px;
+
+background:#11111c;
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:14px;
+
+color:white;
+}
+
+.profile-form button{
+margin-top:15px;
+}
