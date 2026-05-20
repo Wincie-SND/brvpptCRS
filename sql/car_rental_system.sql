@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 20, 2026 at 01:27 AM
+-- Generation Time: May 20, 2026 at 05:39 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -28,14 +28,12 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `bookings` (
-  `booking_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `vehicle_id` int(11) DEFAULT NULL,
-  `pickup_date` date DEFAULT NULL,
-  `return_date` date DEFAULT NULL,
-  `total_price` decimal(10,2) DEFAULT NULL,
-  `booking_status` enum('pending','confirmed','cancelled','completed') DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `vehicle_id` int(11) NOT NULL,
+  `booking_date` date NOT NULL,
+  `status` varchar(50) DEFAULT 'Pending',
+  `return_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -103,24 +101,24 @@ CREATE TABLE `reviews` (
 --
 
 CREATE TABLE `tenants` (
-  `tenant_id` int(11) NOT NULL,
-  `company_name` varchar(100) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `address` text DEFAULT NULL,
-  `status` enum('active','inactive') DEFAULT 'active',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `tenant_key` varchar(50) DEFAULT NULL
+  `id` varchar(20) NOT NULL,
+  `tenant_key` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `tagline` varchar(150) DEFAULT NULL,
+  `plan` varchar(50) DEFAULT NULL,
+  `subscription_revenue` decimal(10,2) DEFAULT NULL,
+  `color` varchar(20) DEFAULT NULL,
+  `join_date` date DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tenants`
 --
 
-INSERT INTO `tenants` (`tenant_id`, `company_name`, `email`, `phone`, `address`, `status`, `created_at`, `tenant_key`) VALUES
-(1, 'DriveLink Rentals', 'admin@drivelink.com', '09123456789', 'Philippines', 'active', '2026-05-17 18:17:54', NULL),
-(2, 'Horizon Car Rental', 'carlos@horizon.com', '09111111111', 'Philippines', 'active', '2026-05-17 18:25:46', 'HORIZON'),
-(3, 'MetroGlide Rentals', 'ryan@metroglide.com', '09222222222', 'Philippines', 'active', '2026-05-17 18:25:46', 'METROGLIDE');
+INSERT INTO `tenants` (`id`, `tenant_key`, `name`, `tagline`, `plan`, `subscription_revenue`, `color`, `join_date`, `status`) VALUES
+('T_HORIZON', 'HORIZON', 'Horizon Car Rentals', 'Drive Beyond The Horizon', 'Enterprise', 29900.00, '#6366f1', '2023-03-15', 'active'),
+('T_METRO', 'METROGLIDE', 'MetroGlide Ph', 'Urban Mobility, Redefined', 'Professional', 14900.00, '#10b981', '2023-08-22', 'active');
 
 -- --------------------------------------------------------
 
@@ -129,27 +127,20 @@ INSERT INTO `tenants` (`tenant_id`, `company_name`, `email`, `phone`, `address`,
 --
 
 CREATE TABLE `users` (
-  `user_id` int(11) NOT NULL,
-  `tenant_id` int(11) DEFAULT NULL,
-  `fullname` varchar(100) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `role` enum('admin','customer','tenant') DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `admin_key` varchar(50) DEFAULT NULL
+  `role` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `tenant_id`, `fullname`, `email`, `address`, `password`, `role`, `created_at`, `admin_key`) VALUES
-(1, 1, 'Admin', 'admin@gmail.com', 'Cebu City', 'admin123', 'admin', '2026-05-17 18:17:55', NULL),
-(2, NULL, 'Maria Renter', 'maria@email.com', 'Mandaue City', 'test123', 'customer', '2026-05-17 18:25:46', NULL),
-(3, 2, 'Carlos Horizon', 'carlos@horizon.com', 'Lapu-Lapu City', 'horizon123', 'tenant', '2026-05-17 18:25:46', NULL),
-(4, 3, 'Ryan MetroGlide', 'ryan@metroglide.com', 'Talisay City', 'metro123', 'tenant', '2026-05-17 18:25:46', NULL),
-(6, NULL, 'Super Admin', 'admin@drivelink.io', NULL, 'superadmin999', 'admin', '2026-05-17 18:52:31', 'DX-ADMIN-9F2A');
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`) VALUES
+(1, 'Juan Dela Cruz', 'juan@gmail.com', '12345', 'tenant'),
+(2, 'Admin User', 'admin@gmail.com', 'admin123', 'admin');
 
 -- --------------------------------------------------------
 
@@ -158,24 +149,25 @@ INSERT INTO `users` (`user_id`, `tenant_id`, `fullname`, `email`, `address`, `pa
 --
 
 CREATE TABLE `vehicles` (
-  `vehicle_id` int(11) NOT NULL,
-  `tenant_id` int(11) DEFAULT NULL,
-  `vehicle_name` varchar(100) DEFAULT NULL,
-  `brand` varchar(100) DEFAULT NULL,
-  `model` varchar(100) DEFAULT NULL,
-  `price_per_day` decimal(10,2) DEFAULT NULL,
-  `image` varchar(255) DEFAULT NULL,
-  `availability` enum('available','booked','maintenance') DEFAULT 'available',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `brand` varchar(100) NOT NULL,
+  `model` varchar(100) NOT NULL,
+  `plate_number` varchar(50) DEFAULT NULL,
+  `price_per_day` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `status` varchar(50) DEFAULT 'Available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `vehicles`
 --
 
-INSERT INTO `vehicles` (`vehicle_id`, `tenant_id`, `vehicle_name`, `brand`, `model`, `price_per_day`, `image`, `availability`, `created_at`) VALUES
-(1, 1, 'Toyota Vios', 'Toyota', '2025', 1500.00, 'vios.jpg', 'available', '2026-05-17 18:17:55'),
-(2, 1, 'Honda Civic', 'Honda', '2025', 2500.00, 'civic.jpg', 'available', '2026-05-17 18:17:55');
+INSERT INTO `vehicles` (`id`, `brand`, `model`, `plate_number`, `price_per_day`, `status`) VALUES
+(1, 'Toyota', 'Vios', NULL, 1500.00, 'Rented'),
+(2, 'Honda', 'Civic', NULL, 2500.00, 'Available'),
+(3, 'Toyota', 'Vios', NULL, 1500.00, 'Available'),
+(4, 'Honda', 'Civic', NULL, 2500.00, 'Available'),
+(5, 'Toyota', 'Vios', NULL, 1500.00, 'Available'),
+(6, 'Honda', 'Civic', NULL, 2500.00, 'Available');
 
 --
 -- Indexes for dumped tables
@@ -185,38 +177,7 @@ INSERT INTO `vehicles` (`vehicle_id`, `tenant_id`, `vehicle_name`, `brand`, `mod
 -- Indexes for table `bookings`
 --
 ALTER TABLE `bookings`
-  ADD PRIMARY KEY (`booking_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `vehicle_id` (`vehicle_id`);
-
---
--- Indexes for table `chats`
---
-ALTER TABLE `chats`
-  ADD PRIMARY KEY (`chat_id`),
-  ADD KEY `customer_id` (`customer_id`),
-  ADD KEY `tenant_id` (`tenant_id`);
-
---
--- Indexes for table `messages`
---
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`message_id`),
-  ADD KEY `chat_id` (`chat_id`),
-  ADD KEY `sender_id` (`sender_id`);
-
---
--- Indexes for table `payments`
---
-ALTER TABLE `payments`
-  ADD PRIMARY KEY (`payment_id`),
-  ADD KEY `booking_id` (`booking_id`);
-
---
--- Indexes for table `reviews`
---
-ALTER TABLE `reviews`
-  ADD PRIMARY KEY (`review_id`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `vehicle_id` (`vehicle_id`);
 
@@ -224,23 +185,21 @@ ALTER TABLE `reviews`
 -- Indexes for table `tenants`
 --
 ALTER TABLE `tenants`
-  ADD PRIMARY KEY (`tenant_id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tenant_key` (`tenant_key`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `tenant_id` (`tenant_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Indexes for table `vehicles`
 --
 ALTER TABLE `vehicles`
-  ADD PRIMARY KEY (`vehicle_id`),
-  ADD KEY `tenant_id` (`tenant_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -250,49 +209,19 @@ ALTER TABLE `vehicles`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `chats`
---
-ALTER TABLE `chats`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `messages`
---
-ALTER TABLE `messages`
-  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `payments`
---
-ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `reviews`
---
-ALTER TABLE `reviews`
-  MODIFY `review_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `tenants`
---
-ALTER TABLE `tenants`
-  MODIFY `tenant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `vehicles`
 --
 ALTER TABLE `vehicles`
-  MODIFY `vehicle_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -302,47 +231,8 @@ ALTER TABLE `vehicles`
 -- Constraints for table `bookings`
 --
 ALTER TABLE `bookings`
-  ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`vehicle_id`);
-
---
--- Constraints for table `chats`
---
-ALTER TABLE `chats`
-  ADD CONSTRAINT `chats_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `chats_ibfk_2` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`);
-
---
--- Constraints for table `messages`
---
-ALTER TABLE `messages`
-  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`chat_id`) REFERENCES `chats` (`chat_id`),
-  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table `payments`
---
-ALTER TABLE `payments`
-  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`);
-
---
--- Constraints for table `reviews`
---
-ALTER TABLE `reviews`
-  ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`vehicle_id`);
-
---
--- Constraints for table `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `vehicles`
---
-ALTER TABLE `vehicles`
-  ADD CONSTRAINT `vehicles_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

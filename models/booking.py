@@ -15,12 +15,8 @@ class Booking:
 
         sql = """
         INSERT INTO bookings
-        (user_id,
-        vehicle_id,
-        booking_date,
-        return_date)
-
-        VALUES (%s, %s, %s, %s)
+            (user_id, vehicle_id, booking_date, return_date)
+        VALUES (%s,%s,%s,%s)
         """
 
         values = (

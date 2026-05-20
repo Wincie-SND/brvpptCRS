@@ -1,36 +1,48 @@
 from database import connect_db
 
-
 class User:
 
-    def add_user(self, name,
-                 password,
-                 role):
+    def add_user(self, name, email, password, role):
+        db = connect_db()
+        cursor = db.cursor()
 
-        conn = connect_db()
+        try:
+            # Check if user already exists
+            cursor.execute(
+                "SELECT id FROM users WHERE email = %s",
+                (email,)
+            )
 
-        cursor = conn.cursor()
+            existing_user = cursor.fetchone()
 
-        sql = """
-        INSERT INTO users
-        (name, password, role)
-        VALUES (%s, %s, %s)
-        """
+            if existing_user:
+                print("User already exists!")
+                return
 
-        values = (
-            name,
-            password,
-            role
-        )
+            sql = """
+            INSERT INTO users
+            (name, email, password, role)
+            VALUES (%s, %s, %s, %s)
+            """
 
-        cursor.execute(sql, values)
+            values = (
+                name,
+                email,
+                password,
+                role
+            )
 
-        conn.commit()
+            cursor.execute(sql, values)
+            db.commit()
 
-        print("User added successfully!")
+            print("User added successfully!")
 
-        cursor.close()
-        conn.close()
+        except Exception as e:
+            print("Error:", e)
+
+        finally:
+            cursor.close()
+            db.close()
 
     def view_users(self):
 

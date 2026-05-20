@@ -11,14 +11,14 @@ booking = Booking()
 
 user.add_user(
     "Juan Dela Cruz",
-    "juan123",
+    "juan@gmail.com",
     "12345",
     "tenant"
 )
 
 user.add_user(
     "Admin User",
-    "admin",
+    "admin@gmail.com",
     "admin123",
     "admin"
 )
