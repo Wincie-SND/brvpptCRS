@@ -3,11 +3,13 @@ from database import connect_db
 
 class Booking:
 
-    def create_booking(self,
-                       user_id,
-                       vehicle_id,
-                       booking_date,
-                       return_date):
+    def create_booking(
+        self,
+        user_id,
+        vehicle_id,
+        booking_date,
+        return_date
+    ):
 
         conn = connect_db()
 
@@ -15,8 +17,12 @@ class Booking:
 
         sql = """
         INSERT INTO bookings
-            (user_id, vehicle_id, booking_date, return_date)
-        VALUES (%s,%s,%s,%s)
+        (user_id,
+        vehicle_id,
+        booking_date,
+        return_date)
+
+        VALUES(%s,%s,%s,%s)
         """
 
         values = (
@@ -26,22 +32,31 @@ class Booking:
             return_date
         )
 
-        cursor.execute(sql, values)
+        cursor.execute(
+            sql,
+            values
+        )
 
         update_sql = """
         UPDATE vehicles
-        SET status = 'Rented'
-        WHERE id = %s
+        SET status='Rented'
+        WHERE id=%s
         """
 
-        cursor.execute(update_sql, (vehicle_id,))
+        cursor.execute(
+            update_sql,
+            (vehicle_id,)
+        )
 
         conn.commit()
 
-        print("Booking successful!")
+        print(
+            "Booking successful!"
+        )
 
         cursor.close()
         conn.close()
+
 
     def view_bookings(self):
 
@@ -61,10 +76,10 @@ class Booking:
         FROM bookings
 
         JOIN users
-        ON bookings.user_id = users.id
+        ON bookings.user_id=users.id
 
         JOIN vehicles
-        ON bookings.vehicle_id = vehicles.id
+        ON bookings.vehicle_id=vehicles.id
         """
 
         cursor.execute(sql)
@@ -77,7 +92,11 @@ class Booking:
         cursor.close()
         conn.close()
 
-    def return_vehicle(self, vehicle_id):
+
+    def return_vehicle(
+        self,
+        vehicle_id
+    ):
 
         conn = connect_db()
 
@@ -85,18 +104,26 @@ class Booking:
 
         sql = """
         UPDATE vehicles
-        SET status = 'Available'
-        WHERE id = %s
+        SET status='Available'
+        WHERE id=%s
         """
 
-        cursor.execute(sql, (vehicle_id,))
+        cursor.execute(
+            sql,
+            (vehicle_id,)
+        )
 
         conn.commit()
 
-        print("Vehicle returned!")
+        print(
+            "Vehicle returned!"
+        )
+
+        cursor.close()
+        conn.close()
 
 
-        def check_vehicle_available(
+    def check_vehicle_available(
         self,
         vehicle_id
     ):
@@ -174,9 +201,6 @@ class Booking:
         )
 
         conn.commit()
-
-        cursor.close()
-        conn.close()
 
         print(
             "Booking cancelled!"
