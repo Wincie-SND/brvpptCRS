@@ -1,13 +1,19 @@
-from openai import OpenAI
+import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-print("API KEY LOADED:", os.getenv("OPENAI_API_KEY") is not None)
+api_key = os.getenv("GEMINI_API_KEY")
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
+print("GEMINI KEY LOADED:", api_key is not None)
+
+genai.configure(
+    api_key=api_key
+)
+
+model = genai.GenerativeModel(
+    "gemini-2.5-flash"
 )
 
 def ask_chatbot(message):
@@ -17,9 +23,7 @@ def ask_chatbot(message):
 
     try:
 
-        response = client.responses.create(
-            model="gpt-4.1-mini",
-            input=f"""
+        prompt = f"""
 You are DriveLink AI Assistant.
 
 Help users with:
@@ -32,12 +36,15 @@ Keep replies short and helpful.
 
 User: {message}
 """
+
+        response = model.generate_content(
+            prompt
         )
 
-        return response.output_text
+        return response.text
 
     except Exception as e:
 
-        print("Chatbot Error:", e)
+        print("Gemini Error:", e)
 
         return "Sorry, chatbot unavailable."

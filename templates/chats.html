@@ -1,74 +1,58 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="renter">
+<html>
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DriveLink — Chats</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="..\static\css\style.css">
-  <link rel="stylesheet" href="..\static\css\index.css">
+
+<title>DriveLink Chatbot</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/chats.css') }}">
+
 </head>
-<body class="theme-renter">
-  <!-- Navigation -->
-  <nav class="nav">
-    <div class="nav-brand">Drive<span>Link</span></div>
-    <div class="nav-links">
-      <a class="nav-link" href="index.html">🏪 Marketplace</a>
-      <a class="nav-link active" href="chats.html">💬 Chats</a>
-      <a class="nav-link " href="account.html">👤 My Account</a>
 
-      <div id="navLogin">
-        <a href="login.html" class="btn btn-primary btn-sm">Sign In</a>
-      </div>
+<body>
 
-      <div id="navUser" style="display:none;align-items:center;gap:0.75rem">
-        <div class="avatar avatar-sm" style="background:var(--clr-primary-muted);color:var(--clr-primary-light)">
-          <span id="navName">U</span>
+<div class="chat-container">
+
+<h2>DriveLink AI Assistant</h2>
+
+<div class="chat-box">
+
+{% for chat in chat_history %}
+
+    {% if chat.sender=="user" %}
+
+        <div class="user">
+            {{chat.text}}
         </div>
-        <button id="logoutBtn" class="btn btn-ghost btn-sm">Sign Out</button>
-      </div>
-    </div>
-  </nav>
-  <!-- ─── CHATS PAGE ─── -->
-  <main class="container" style="padding-top:2rem">
-    <div class="section-header mb-6">
-      <div>
-        <h2 class="mb-1">Chats</h2>
-        <p class="text-sm text-muted">Support conversations with fleet partners.</p>
-      </div>
-    </div>
 
-    <div class="user-chat-wrap">
-      <div class="user-chat-head">
-        <p style="font-weight:600;font-size:0.875rem;color:var(--clr-text)">Conversations with Fleet Partners</p>
-        <p class="text-xs text-muted">Click a thread to view messages</p>
-      </div>
+    {% else %}
 
-      <div class="user-chat-threads" id="myChatList">
-        <p class="p-4 text-sm text-muted">Loading conversations…</p>
-      </div>
-
-      <div class="chat-messages-wrap" id="chatWindow">
-        <div style="text-align:center;margin:auto;color:var(--clr-text-3)">
-          <div style="font-size:2.5rem;margin-bottom:0.75rem">💬</div>
-          <p class="text-sm">Select a conversation to read messages</p>
+        <div class="bot">
+            {{chat.text}}
         </div>
-      </div>
 
-      <div class="chat-input-tray" id="chatInputArea" style="display:none">
-        <input type="text" id="userChatInput" placeholder="Type a message… (Enter to send)">
-        <button id="userChatSend" class="btn btn-primary btn-sm" style="flex-shrink:0">Send</button>
-      </div>
-    </div>
-  </main>
+    {% endif %}
 
-  <footer style="border-top:1px solid var(--clr-border);padding:2rem 1.5rem;margin-top:4rem;background:var(--clr-bg-2)">
-    <div class="container flex items-center justify-between" style="flex-wrap:wrap;gap:1rem">
-      <div class="nav-brand" style="font-size:1.1rem">Drive<span style="color:var(--clr-primary)">Link</span></div>
-      <p class="text-xs text-muted">© 2025 DriveLink · Premium Multi-Tenant Car Rental Platform</p>
-    </div>
-  </footer>
+{% endfor %}
 
-  <script src="../static/js/app.js"></script>
+</div>
+
+<form action="/chat" method="POST">
+
+<input
+name="message"
+placeholder="Ask DriveLink..."
+required>
+
+<button type="submit">
+Send
+</button>
+
+</form>
+
+</div>
+
 </body>
 </html>
