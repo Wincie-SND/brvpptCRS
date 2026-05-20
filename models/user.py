@@ -3,8 +3,7 @@ from database import connect_db
 
 class User:
 
-    def add_user(self, fullname,
-                 username,
+    def add_user(self, name,
                  password,
                  role):
 
@@ -14,13 +13,12 @@ class User:
 
         sql = """
         INSERT INTO users
-        (fullname, username, password, role)
-        VALUES (%s, %s, %s, %s)
+        (name, password, role)
+        VALUES (%s, %s, %s)
         """
 
         values = (
-            fullname,
-            username,
+            name,
             password,
             role
         )

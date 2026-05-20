@@ -56,7 +56,7 @@ class Booking:
         sql = """
         SELECT
             bookings.id,
-            users.fullname,
+            users.name,
             vehicles.brand,
             vehicles.model,
             bookings.booking_date,
