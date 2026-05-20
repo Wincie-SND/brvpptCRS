@@ -10,13 +10,23 @@ if(loginForm){
         const email = document.getElementById("loginEmail").value.trim().toLowerCase();
         const password = document.getElementById("loginPassword").value.trim();
 
+
         console.log("Tenant:", tenantKey);
         console.log("Email:", email);
         console.log("Password:", password);
 
         if(email === "maria@email.com" && password === "test123"){
+        localStorage.setItem("currentUser", JSON.stringify({
+        id: 2,
+        fullname: "Maria Santos",
+        email: "maria@email.com",
+        phone: "+63-912-345-6789",
+        address: "Mandaue City",
+        role: "customer"
+            }));
+
             window.location.replace("index.html");
-            return;
+          return;
         }
 
         if(email === "carlos@horizon.com" && password === "horizon123" && tenantKey === "HORIZON"){
@@ -77,8 +87,9 @@ const DB = {
       avatar: 'MS',
       license_status: 'verified',
       joinDate: '2024-01-10',
-      phone: '+63-912-345-6789'
-    },
+      phone: '+63-912-345-6789',
+      address: 'Mandaue City'
+},
     {
       id: 'U002',
       name: 'Juan Reyes',
@@ -89,7 +100,8 @@ const DB = {
       avatar: 'JR',
       license_status: 'pending',
       joinDate: '2024-03-05',
-      phone: '+63-917-654-3210'
+      phone: '+63-917-654-3210',
+      address: 'Cebu City'
     },
     {
       id: 'U003',
@@ -101,7 +113,8 @@ const DB = {
       avatar: 'AC',
       license_status: 'verified',
       joinDate: '2024-05-18',
-      phone: '+63-920-111-2233'
+      phone: '+63-920-111-2233',
+      address: 'Lapu-Lapu City'
     },
     // Horizon Staff
     {
@@ -114,7 +127,8 @@ const DB = {
       avatar: 'CM',
       license_status: 'n/a',
       joinDate: '2023-03-15',
-      phone: '+63-999-888-7766'
+      phone: '+63-999-888-7766',
+      address: 'Talisay City'
     },
     {
       id: 'U005',
@@ -126,7 +140,8 @@ const DB = {
       avatar: 'LT',
       license_status: 'n/a',
       joinDate: '2023-06-01',
-      phone: '+63-999-111-2244'
+      phone: '+63-999-111-2244',
+      address: 'Mandaue City'
     },
     // MetroGlide Staff
     {
@@ -139,7 +154,8 @@ const DB = {
       avatar: 'RL',
       license_status: 'n/a',
       joinDate: '2023-08-22',
-      phone: '+63-916-500-1234'
+      phone: '+63-916-500-1234',
+      address: 'Cebu City'
     },
     {
       id: 'U007',
@@ -151,7 +167,8 @@ const DB = {
       avatar: 'SG',
       license_status: 'n/a',
       joinDate: '2023-09-10',
-      phone: '+63-916-500-5678'
+      phone: '+63-916-500-5678', 
+      address: 'Lapu-Lapu City'
     },
     // Super Admin
     {
@@ -165,7 +182,8 @@ const DB = {
       avatar: 'AR',
       license_status: 'n/a',
       joinDate: '2023-01-01',
-      phone: '+63-800-000-0000'
+      phone: '+63-800-000-0000',
+      address: 'DriveLink HQ, Manila'
     }
   ],
 
@@ -691,6 +709,8 @@ function initLoginPage() {
       document.getElementById('loginPassword')
       .value.trim();
 
+    
+
     const result =
       Auth.login(email,password,tenantKey);
 
@@ -909,82 +929,154 @@ function initFilters() {
 }
 
 function renderAccountView(session) {
-  if (!session) return;
 
-  const userBookings = DataStore.getBookings(null, session.id);
-  const userChats    = DataStore.getChats(null, session.id);
+    if(!session) return;
 
-  const bookingList = document.getElementById('myBookings');
-  const chatList    = document.getElementById('myChatList');
+    // ONLY CHATS WILL REMAIN
+    const userChats =
+    DataStore.getChats(null, session.id);
 
-  if (bookingList) {
-    bookingList.innerHTML = userBookings.length ? userBookings.map(b => {
-      const v = DataStore.getVehicleById(b.vehicle_id);
-      const t = DataStore.getTenantById(b.tenant_id);
-      return `
-        <div class="glass-card p-4 mb-3 animate-fade-in">
-          <div class="flex items-center gap-3">
-            <div class="rental-img">
-              <img
-                src="${v?.image || '../static/images/default-car.jpg'}"
-                  alt="${v ? v.brand + ' ' + v.model : 'Vehicle'}"
-                      onerror="this.src='../static/images/default-car.jpg'">
-              </div>            
-              <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <h4 style="font-size:0.95rem">${v ? v.brand + ' ' + v.model : 'Vehicle'}</h4>
-                ${UI.statusBadge(b.status)}
-              </div>
-              <p class="text-xs text-muted">${t ? t.name : ''} · ${UI.formatDate(b.startDate)} → ${UI.formatDate(b.endDate)}</p>
-            </div>
-            <div class="text-right">
-              <div style="font-family:var(--font-display);font-weight:700;color:var(--clr-text)">${UI.formatCurrency(b.totalAmount)}</div>
-              <div class="text-xs text-muted">${b.totalDays} days · ${UI.statusBadge(b.paymentStatus)}</div>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('') : '<p class="text-muted text-sm">No bookings yet.</p>';
-  }
+    const chatList =
+    document.getElementById("myChatList");
 
-  if (chatList) {
-    chatList.innerHTML = '';
-    if (!userChats.length) {
-      chatList.innerHTML = '<p class="text-muted text-sm">No support conversations yet.</p>';
-      return;
+    if(!chatList) return;
+
+    chatList.innerHTML = "";
+
+    if(!userChats.length){
+
+        chatList.innerHTML = `
+        <p class="text-muted text-sm">
+        No support conversations yet.
+        </p>
+        `;
+
+        return;
     }
 
-    // Show first chat by default
+    // open first chat automatically
     renderUserChat(userChats[0].id);
 
-    userChats.forEach(chat => {
-      const tenant = DataStore.getTenantById(chat.tenant_id);
-      const lastMsg = chat.messages[chat.messages.length - 1];
-      const btn = document.createElement('div');
-      btn.className = 'chat-thread-item';
-      btn.dataset.chatId = chat.id;
-      btn.innerHTML = `
-        <div class="avatar avatar-sm" style="background:var(--clr-primary-muted);color:var(--clr-primary-light)">
-          ${UI.getInitials(tenant ? tenant.name : 'CS')}
+    userChats.forEach(chat=>{
+
+        const tenant=
+        DataStore.getTenantById(
+        chat.tenant_id
+        );
+
+        const lastMsg=
+        chat.messages[
+        chat.messages.length-1
+        ];
+
+        const btn=
+        document.createElement("div");
+
+        btn.className=
+        "chat-thread-item";
+
+        btn.dataset.chatId=
+        chat.id;
+
+        btn.innerHTML=`
+
+        <div class="avatar avatar-sm"
+        style="
+        background:var(--clr-primary-muted);
+        color:var(--clr-primary-light)">
+
+        ${UI.getInitials(
+        tenant
+        ? tenant.name
+        : "CS"
+        )}
+
         </div>
+
         <div class="flex-1 min-h-0">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-sm font-medium truncate" style="color:var(--clr-text)">${tenant ? tenant.name : 'Support'}</span>
-            <span class="text-xs text-muted">${lastMsg.time}</span>
-          </div>
-          <p class="text-xs text-muted truncate">${lastMsg.text.slice(0, 45)}…</p>
+
+            <div class="
+            flex
+            items-center
+            justify-between
+            mb-1">
+
+            <span
+            class="text-sm
+            font-medium
+            truncate"
+            style="
+            color:var(--clr-text)">
+
+            ${tenant
+            ? tenant.name
+            : "Support"}
+
+            </span>
+
+            <span
+            class="
+            text-xs
+            text-muted">
+
+            ${lastMsg.time}
+
+            </span>
+
+            </div>
+
+            <p class="
+            text-xs
+            text-muted
+            truncate">
+
+            ${lastMsg.text.slice(0,45)}...
+
+            </p>
+
         </div>
-        ${chat.unread ? `<span class="unread-badge">${chat.unread}</span>` : ''}
-      `;
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.chat-thread-item').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        renderUserChat(chat.id);
-      });
-      chatList.appendChild(btn);
+
+        ${
+        chat.unread
+        ? `<span class="unread-badge">
+           ${chat.unread}
+           </span>`
+        : ""
+        }
+
+        `;
+
+        btn.addEventListener(
+        "click",()=>{
+
+            document
+            .querySelectorAll(
+            ".chat-thread-item"
+            )
+
+            .forEach(el=>
+            el.classList.remove(
+            "active"
+            ));
+
+            btn.classList.add(
+            "active"
+            );
+
+            renderUserChat(
+            chat.id
+            );
+
+        });
+
+        chatList.appendChild(
+        btn
+        );
+
     });
-  }
+
 }
+
 
 function loadProfile(){
 
