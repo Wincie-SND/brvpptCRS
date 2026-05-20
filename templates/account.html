@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="renter">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriveLink — My Account</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="..\static\css\style.css">
+  <link rel="stylesheet" href="..\static\css\index.css">
+</head>
+<body class="theme-renter">
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-brand">Drive<span>Link</span></div>
+    <div class="nav-links">
+      <a class="nav-link" href="index.html">🏪 Marketplace</a>
+      <a class="nav-link " href="chats.html">💬 Chats</a>
+      <a class="nav-link active" href="account.html">👤 My Account</a>
+
+      <div id="navLogin">
+        <a href="login.html" class="btn btn-primary btn-sm">Sign In</a>
+      </div>
+
+      <div id="navUser" style="display:none;align-items:center;gap:0.75rem">
+        <div class="avatar avatar-sm" style="background:var(--clr-primary-muted);color:var(--clr-primary-light)">
+          <span id="navName">U</span>
+        </div>
+        <button id="logoutBtn" class="btn btn-ghost btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+  <!-- ─── ACCOUNT PAGE ─── -->
+  <main class="container" style="padding-top:2rem">
+    <div class="section-header mb-6">
+      <div>
+        <h2 class="mb-1">My Account</h2>
+        <p class="text-sm text-muted">View and update your renter profile information.</p>
+      </div>
+    </div>
+
+    <div class="account-grid">
+      <div class="card">
+        <h3 class="mb-4">Profile Details</h3>
+
+        <form id="profileForm" class="profile-form">
+          <label>Full Name</label>
+          <input id="profileNameInput" type="text" placeholder="Full name">
+
+          <label>Gmail</label>
+          <input id="profileEmailInput" type="email" placeholder="Email address">
+          
+          <label>Phone Number</label>
+          <input id="profilePhoneInput" type="text" placeholder="Phone number">
+
+          <label>Address</label>
+          <input id="profileAddressInput" type="text" placeholder="Address">
+
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+
+      <div>
+        <div class="profile-card" id="profileCard">
+          <div class="profile-avatar" id="profileAvatar">?</div>
+          <h3 id="profileDisplayName" style="margin-bottom:0.25rem">Loading…</h3>
+          <p class="text-sm text-muted" id="profileDisplayEmail"></p>
+          <p class="text-sm text-muted" id="profileDisplayPhone"></p>
+          <p class="text-sm text-muted" id="profileDisplayAddress"></p>
+          <div class="flex justify-center gap-2 mt-3">
+            <span id="profileLicense" class="badge badge-neutral"></span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="mb-3">📋 My Rentals</h4>
+          <div id="myBookings">
+            <p class="text-sm text-muted">Your rentals will be loaded here from the database/API.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid var(--clr-border);padding:2rem 1.5rem;margin-top:4rem;background:var(--clr-bg-2)">
+    <div class="container flex items-center justify-between" style="flex-wrap:wrap;gap:1rem">
+      <div class="nav-brand" style="font-size:1.1rem">Drive<span style="color:var(--clr-primary)">Link</span></div>
+      <p class="text-xs text-muted">© 2025 DriveLink · Premium Multi-Tenant Car Rental Platform</p>
+    </div>
+  </footer>
+
+  <script src="../static/js/app.js"></script>
+</body>
+</html>

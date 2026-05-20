@@ -15,9 +15,9 @@
   <nav class="nav">
     <div class="nav-brand">Drive<span>Link</span></div>
     <div class="nav-links">
-      <button class="nav-link active" data-view="market">🏪 Marketplace</button>
-      <button class="nav-btn" data-view="chat">💬 Chats</button>
-      <button class="nav-link" data-view="account">👤 My Account</button>
+      <a class="nav-link active" href="index.html">🏪 Marketplace</a>
+      <a class="nav-link" href="chats.html">💬 Chats</a>
+      <a class="nav-link" href="account.html">👤 My Account</a>
 
       <!-- Guest state -->
       <div id="navLogin">
@@ -160,102 +160,6 @@
 
     </div>
   </div>
-
-<!-- ─── ACCOUNT VIEW ─── -->
-<div id="viewAccount" style="display:none">
-
-    <div class="account-grid">
-
-        <div class="card">
-
-            <h2>My Profile</h2>
-
-            <form id="profileForm" class="profile-form">
-
-                <label>Full Name</label>
-               <input id="profileName" type="text">
-
-                <label>Gmail</label>
-                <input id="profileEmail" type="email">
-
-                <label>Phone Number</label>
-                <input id="profilePhone" type="text">
-
-                <label>Address</label>
-                <input id="profileAddress" type="text">
-
-                <button
-                type="submit"
-                class="btn btn-primary">
-
-                Save Changes
-
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-
-</div>
-
-      <!-- Left: Profile + Bookings -->
-      <div>
-        <!-- Profile Card (populated by JS) -->
-        <div class="profile-card" id="profileCard">
-          <div class="profile-avatar" id="profileAvatar">?</div>
-          <h3 id="profileName" style="margin-bottom:0.25rem">Loading…</h3>
-          <p class="text-sm text-muted" id="profileEmail"></p>
-          <div class="flex justify-center gap-2 mt-3">
-            <span id="profileLicense" class="badge badge-neutral"></span>
-          </div>
-        </div>
-
-        <!-- Bookings -->
-        <div>
-          <h4 class="mb-3">📋 My Rentals</h4>
-          <div id="myBookings">
-            <div class="skeleton" style="height:80px;border-radius:var(--radius-md);margin-bottom:0.75rem"></div>
-            <div class="skeleton" style="height:80px;border-radius:var(--radius-md)"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Chat -->
-      <div>
-        <h4 class="mb-3">💬 Support Chat</h4>
-
-        <div class="user-chat-wrap">
-          <div class="user-chat-head">
-            <p style="font-weight:600;font-size:0.875rem;color:var(--clr-text)">Conversations with Fleet Partners</p>
-            <p class="text-xs text-muted">Click a thread to view messages</p>
-          </div>
-
-          <!-- Thread List -->
-          <div class="user-chat-threads" id="myChatList">
-            <p class="p-4 text-sm text-muted">Loading conversations…</p>
-          </div>
-
-          <!-- Messages -->
-          <div class="chat-messages-wrap" id="chatWindow">
-            <div style="text-align:center;margin:auto;color:var(--clr-text-3)">
-              <div style="font-size:2.5rem;margin-bottom:0.75rem">💬</div>
-              <p class="text-sm">Select a conversation to read messages</p>
-            </div>
-          </div>
-
-          <!-- Input -->
-          <div class="chat-input-tray" id="chatInputArea">
-            <input type="text" id="userChatInput" placeholder="Type a message… (Enter to send)">
-            <button id="userChatSend" class="btn btn-primary btn-sm" style="flex-shrink:0">Send</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
   <!-- Footer -->
   <footer style="border-top:1px solid var(--clr-border);padding:2rem 1.5rem;margin-top:4rem;background:var(--clr-bg-2)">
     <div class="container flex items-center justify-between" style="flex-wrap:wrap;gap:1rem">
@@ -270,23 +174,5 @@
   </footer>
 
   <script src="../static/js/app.js"></script>
-  <script>
-    // Populate profile card once session is available
-    document.addEventListener('DOMContentLoaded', () => {
-      const session = Session ? Session.get() : null;
-      if (session) {
-        const el = {
-          avatar: document.getElementById('profileAvatar'),
-          name:   document.getElementById('profileName'),
-          email:  document.getElementById('profileEmail'),
-          lic:    document.getElementById('profileLicense'),
-        };
-        if (el.avatar) el.avatar.textContent = session.avatar || '?';
-        if (el.name) el.name.textContent = session.name || '';
-        if (el.email) el.email.textContent = session.email || '';
-        if (el.lic) el.lic.innerHTML = UI.statusBadge(session.license_status || 'pending');
-      }
-    });
-  </script>
 </body>
 </html>

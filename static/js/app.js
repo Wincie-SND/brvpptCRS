@@ -1,53 +1,5 @@
 'use strict';
 
-const loginForm = document.getElementById("loginForm");
-
-if(loginForm){
-    loginForm.addEventListener("submit", function(e){
-        e.preventDefault();
-
-        const tenantKey = document.getElementById("tenantKey").value.trim().toUpperCase();
-        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-        const password = document.getElementById("loginPassword").value.trim();
-
-
-        console.log("Tenant:", tenantKey);
-        console.log("Email:", email);
-        console.log("Password:", password);
-
-        if(email === "maria@email.com" && password === "test123"){
-        localStorage.setItem("currentUser", JSON.stringify({
-        id: 2,
-        fullname: "Maria Santos",
-        email: "maria@email.com",
-        phone: "+63-912-345-6789",
-        address: "Mandaue City",
-        role: "customer"
-            }));
-
-            window.location.replace("index.html");
-          return;
-        }
-
-        if(email === "carlos@horizon.com" && password === "horizon123" && tenantKey === "HORIZON"){
-            window.location.href = "tenant.html";
-            return; 
-        }
-
-        if(email === "ryan@metroglide.com" && password === "metro123" && tenantKey === "METROGLIDE"){
-            window.location.href = "tenant.html";
-            return;
-        }
-
-        if(email === "admin@drivelink.io" && password === "superadmin999"){
-            window.location.href = "admin.html";
-            return;
-        }
-
-        alert("Invalid login credentials");
-    });
-}
-
 const DB = {
 
   tenants: [
@@ -745,51 +697,71 @@ function initLoginPage() {
 // § 7. INDEX PAGE MODULE (Marketplace + Renter)
 // ─────────────────────────────────────────────
 
-function initIndexPage() {
+function initRenterNav(activePage = 'market') {
   const session = Session.get();
-  const navLogin   = document.getElementById('navLogin');
-  const navUser    = document.getElementById('navUser');
-  const navName    = document.getElementById('navName');
-  const logoutBtn  = document.getElementById('logoutBtn');
-  const viewMarket = document.getElementById('viewMarket');
-  const viewAccount= document.getElementById('viewAccount');
+  const navLogin  = document.getElementById('navLogin');
+  const navUser   = document.getElementById('navUser');
+  const navName   = document.getElementById('navName');
+  const logoutBtn = document.getElementById('logoutBtn');
 
-  // Update nav state
   if (session && session.role === 'renter') {
     navLogin && (navLogin.style.display = 'none');
-    navUser  && (navUser.style.display = 'flex');
-    navName  && (navName.textContent = session.name.split(' ')[0]);
+    navUser && (navUser.style.display = 'flex');
+    navName && (navName.textContent = session.name.split(' ')[0]);
   } else {
     navUser && (navUser.style.display = 'none');
   }
 
   if (logoutBtn) logoutBtn.addEventListener('click', Auth.logout.bind(Auth));
+}
 
-  // Nav tabs
-  document.querySelectorAll('[data-view]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = btn.dataset.view;
-      document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (viewMarket) viewMarket.style.display = target === 'market' ? 'block' : 'none';
-      if (viewAccount) viewAccount.style.display = target === 'account' ? 'block' : 'none';
+function requireRenter() {
+  const session = Session.get();
+  if (!session || session.role !== 'renter') {
+    window.location.href = 'login.html';
+    return null;
+  }
+  return session;
+}
 
-      if (target === 'account') {
-        if (!session) {
-          window.location.href = 'login.html';
-        } else {
-          renderAccountView(session);
-          loadProfile();
-        }
-      }
-    });
-  });
-
-  // Render marketplace
+function initIndexPage() {
+  initRenterNav('market');
   renderMarketplace();
   initFilters();
 }
 
+function initAccountPage() {
+  initRenterNav('account');
+  const session = requireRenter();
+  if (!session) return;
+  loadProfile();
+
+  const form = document.getElementById('profileForm');
+  if (form) {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const updated = {
+        ...session,
+        name: document.getElementById('profileNameInput')?.value.trim() || session.name,
+        email: document.getElementById('profileEmailInput')?.value.trim() || session.email,
+        phone: document.getElementById('profilePhoneInput')?.value.trim() || session.phone,
+        address: document.getElementById('profileAddressInput')?.value.trim() || session.address
+      };
+
+      Session.set(updated);
+      loadProfile();
+      UI.showToast('Profile updated locally. Connect this to your Python API to save it in SQL.', 'success');
+    });
+  }
+}
+
+function initChatsPage() {
+  initRenterNav('chat');
+  const session = requireRenter();
+  if (!session) return;
+  renderAccountView(session);
+}
 function renderMarketplace(filters = {}) {
   const grid = document.getElementById('vehicleGrid');
   if (!grid) return;
@@ -1084,17 +1056,29 @@ function loadProfile(){
 
     if(!session) return;
 
-    document.getElementById("profileName").value =
-    session.name || "";
+    const setValue = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.value = value || "";
+    };
 
-    document.getElementById("profileEmail").value =
-    session.email || "";
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value || "";
+    };
 
-    document.getElementById("profilePhone").value =
-    session.phone || "";
+    setValue("profileNameInput", session.name);
+    setValue("profileEmailInput", session.email);
+    setValue("profilePhoneInput", session.phone);
+    setValue("profileAddressInput", session.address);
 
-    document.getElementById("profileAddress").value =
-    session.address || "";
+    setText("profileAvatar", session.avatar || UI.getInitials(session.name || "User"));
+    setText("profileDisplayName", session.name);
+    setText("profileDisplayEmail", session.email);
+    setText("profileDisplayPhone", session.phone);
+    setText("profileDisplayAddress", session.address);
+
+    const lic = document.getElementById("profileLicense");
+    if (lic) lic.innerHTML = UI.statusBadge(session.license_status || "pending");
 }
 
 function renderUserChat(chatId) {
@@ -1687,7 +1671,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initLoginPage();
   } else if (page === 'index.html') {
     initIndexPage();
-    // User chat send
+  } else if (page === 'account.html') {
+    initAccountPage();
+  } else if (page === 'chats.html') {
+    initChatsPage();
     initChatSend('userChatInput', 'userChatSend', 'chatWindow',
       () => document.getElementById('chatInputArea')?.dataset.chatId, 'user');
   } else if (page === 'portal.html') {
