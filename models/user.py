@@ -74,5 +74,75 @@ class User:
 
         print("User deleted!")
 
+
+    def login_user(self, email):
+
+        conn = connect_db()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT * FROM users WHERE email=%s",
+            (email,)
+        )
+
+        user = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        return user
+
+
+    def get_user_profile(self, user_id):
+
+        conn = connect_db()
+
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT * FROM users WHERE id=%s",
+            (user_id,)
+        )
+
+        profile = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        return profile
+
+
+    def update_user_profile(
+        self,
+        user_id,
+        name,
+        phone,
+        address
+    ):
+
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        cursor.execute(
+        """
+        UPDATE users
+        SET
+        name=%s,
+        phone=%s,
+        address=%s
+        WHERE id=%s
+        """,
+
+        (
+            name,
+            phone,
+            address,
+            user_id
+        )
+        )
+
+        conn.commit()
+        
+
         cursor.close()
         conn.close()

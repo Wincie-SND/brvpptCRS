@@ -1,6 +1,5 @@
 from database import connect_db
 
-
 class Vehicle:
 
     def add_vehicle(self,
@@ -93,5 +92,55 @@ class Vehicle:
 
         print("Vehicle deleted!")
 
+
+        def get_vehicle_by_id(
+        self,
+        vehicle_id
+    ):
+
+        conn = connect_db()
+
+        cursor = conn.cursor(
+            dictionary=True
+        )
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM vehicles
+            WHERE id=%s
+            """,
+
+            (vehicle_id,)
+        )
+
+        vehicle = cursor.fetchone()
+
         cursor.close()
         conn.close()
+
+        return vehicle
+
+
+    def show_available_vehicles(self):
+
+        conn = connect_db()
+
+        cursor = conn.cursor(
+            dictionary=True
+        )
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM vehicles
+            WHERE status='Available'
+            """
+        )
+
+        vehicles = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return vehicles

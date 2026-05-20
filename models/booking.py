@@ -95,5 +95,92 @@ class Booking:
 
         print("Vehicle returned!")
 
+
+        def check_vehicle_available(
+        self,
+        vehicle_id
+    ):
+
+        conn = connect_db()
+
+        cursor = conn.cursor(
+            dictionary=True
+        )
+
+        cursor.execute(
+            """
+            SELECT status
+            FROM vehicles
+            WHERE id=%s
+            """,
+
+            (vehicle_id,)
+        )
+
+        vehicle = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        return vehicle
+
+
+    def get_booking_by_id(
+        self,
+        booking_id
+    ):
+
+        conn = connect_db()
+
+        cursor = conn.cursor(
+            dictionary=True
+        )
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM bookings
+            WHERE id=%s
+            """,
+
+            (booking_id,)
+        )
+
+        booking = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        return booking
+
+
+    def cancel_booking(
+        self,
+        booking_id
+    ):
+
+        conn = connect_db()
+
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE bookings
+            SET status='Cancelled'
+            WHERE id=%s
+            """,
+
+            (booking_id,)
+        )
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        print(
+            "Booking cancelled!"
+        )
+
         cursor.close()
         conn.close()
