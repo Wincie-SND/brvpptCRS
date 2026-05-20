@@ -1,13 +1,52 @@
-/* ============================================================
-   DRIVEX — app.js
-   Mock Database · Auth Engine · Session Logic · Chat State
-   ============================================================ */
-
 'use strict';
 
-// ─────────────────────────────────────────────
-// § 1. MOCK RELATIONAL DATABASE
-// ─────────────────────────────────────────────
+const loginForm = document.getElementById("loginForm");
+
+if(loginForm){
+    loginForm.addEventListener("submit", function(e){
+        e.preventDefault();
+
+        const tenantKey = document.getElementById("tenantKey").value.trim().toUpperCase();
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+        const password = document.getElementById("loginPassword").value.trim();
+
+
+        console.log("Tenant:", tenantKey);
+        console.log("Email:", email);
+        console.log("Password:", password);
+
+        if(email === "maria@email.com" && password === "test123"){
+        localStorage.setItem("currentUser", JSON.stringify({
+        id: 2,
+        fullname: "Maria Santos",
+        email: "maria@email.com",
+        phone: "+63-912-345-6789",
+        address: "Mandaue City",
+        role: "customer"
+            }));
+
+            window.location.replace("index.html");
+          return;
+        }
+
+        if(email === "carlos@horizon.com" && password === "horizon123" && tenantKey === "HORIZON"){
+            window.location.href = "tenant.html";
+            return; 
+        }
+
+        if(email === "ryan@metroglide.com" && password === "metro123" && tenantKey === "METROGLIDE"){
+            window.location.href = "tenant.html";
+            return;
+        }
+
+        if(email === "admin@drivelink.io" && password === "superadmin999"){
+            window.location.href = "admin.html";
+            return;
+        }
+
+        alert("Invalid login credentials");
+    });
+}
 
 const DB = {
 
@@ -48,8 +87,9 @@ const DB = {
       avatar: 'MS',
       license_status: 'verified',
       joinDate: '2024-01-10',
-      phone: '+63-912-345-6789'
-    },
+      phone: '+63-912-345-6789',
+      address: 'Mandaue City'
+},
     {
       id: 'U002',
       name: 'Juan Reyes',
@@ -60,7 +100,8 @@ const DB = {
       avatar: 'JR',
       license_status: 'pending',
       joinDate: '2024-03-05',
-      phone: '+63-917-654-3210'
+      phone: '+63-917-654-3210',
+      address: 'Cebu City'
     },
     {
       id: 'U003',
@@ -72,7 +113,8 @@ const DB = {
       avatar: 'AC',
       license_status: 'verified',
       joinDate: '2024-05-18',
-      phone: '+63-920-111-2233'
+      phone: '+63-920-111-2233',
+      address: 'Lapu-Lapu City'
     },
     // Horizon Staff
     {
@@ -85,7 +127,8 @@ const DB = {
       avatar: 'CM',
       license_status: 'n/a',
       joinDate: '2023-03-15',
-      phone: '+63-999-888-7766'
+      phone: '+63-999-888-7766',
+      address: 'Talisay City'
     },
     {
       id: 'U005',
@@ -97,7 +140,8 @@ const DB = {
       avatar: 'LT',
       license_status: 'n/a',
       joinDate: '2023-06-01',
-      phone: '+63-999-111-2244'
+      phone: '+63-999-111-2244',
+      address: 'Mandaue City'
     },
     // MetroGlide Staff
     {
@@ -110,7 +154,8 @@ const DB = {
       avatar: 'RL',
       license_status: 'n/a',
       joinDate: '2023-08-22',
-      phone: '+63-916-500-1234'
+      phone: '+63-916-500-1234',
+      address: 'Cebu City'
     },
     {
       id: 'U007',
@@ -122,20 +167,23 @@ const DB = {
       avatar: 'SG',
       license_status: 'n/a',
       joinDate: '2023-09-10',
-      phone: '+63-916-500-5678'
+      phone: '+63-916-500-5678', 
+      address: 'Lapu-Lapu City'
     },
     // Super Admin
     {
       id: 'U999',
+      key: 'DX-ADMIN-9F2A',
       name: 'Admin Root',
-      email: 'admin@drivex.io',
+      email: 'admin@drivelink.io',
       password: 'superadmin999',
       role: 'super_admin',
       tenant_id: null,
       avatar: 'AR',
       license_status: 'n/a',
       joinDate: '2023-01-01',
-      phone: '+63-800-000-0000'
+      phone: '+63-800-000-0000',
+      address: 'DriveLink HQ, Manila'
     }
   ],
 
@@ -146,35 +194,35 @@ const DB = {
       brand: 'Toyota', model: 'Fortuner', year: 2023,
       category: 'SUV', transmission: 'Automatic', fuel: 'Diesel',
       pricePerDay: 4500, available: true, color: '#6366f1',
-      emoji: '🚙', plate: 'HRZ-001', seats: 7, mileage: 12000
+      image:'../static/images/tfortuner.png', plate: 'HRZ-001', seats: 7, mileage: 12000
     },
     {
       id: 'V002', tenant_id: 'T_HORIZON',
       brand: 'Honda', model: 'Civic', year: 2024,
       category: 'Sedan', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2800, available: true, color: '#8b5cf6',
-      emoji: '🚗', plate: 'HRZ-002', seats: 5, mileage: 5200
+      image:'../static/images/hcivic.png', plate: 'HRZ-002', seats: 5, mileage: 5200
     },
     {
       id: 'V003', tenant_id: 'T_HORIZON',
       brand: 'Mitsubishi', model: 'Montero Sport', year: 2022,
       category: 'SUV', transmission: 'Manual', fuel: 'Diesel',
       pricePerDay: 3900, available: false, color: '#06b6d4',
-      emoji: '🏔️', plate: 'HRZ-003', seats: 7, mileage: 38000
+      image:'../static/images/tmonterosport.png', plate: 'HRZ-003', seats: 7, mileage: 38000
     },
     {
       id: 'V004', tenant_id: 'T_HORIZON',
       brand: 'Ford', model: 'Ranger', year: 2023,
       category: 'Pickup', transmission: 'Automatic', fuel: 'Diesel',
       pricePerDay: 4200, available: true, color: '#f59e0b',
-      emoji: '🛻', plate: 'HRZ-004', seats: 5, mileage: 18500
+      image:'../static/images/franger.png', plate: 'HRZ-004', seats: 5, mileage: 18500
     },
     {
       id: 'V005', tenant_id: 'T_HORIZON',
       brand: 'Mazda', model: 'CX-5', year: 2024,
       category: 'SUV', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 3600, available: true, color: '#ef4444',
-      emoji: '🚐', plate: 'HRZ-005', seats: 5, mileage: 3100
+      image:'../static/images/mcx-5.png  ', plate: 'HRZ-005', seats: 5, mileage: 3100
     },
     // MetroGlide Fleet
     {
@@ -182,28 +230,28 @@ const DB = {
       brand: 'Toyota', model: 'Vios', year: 2023,
       category: 'Sedan', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2200, available: true, color: '#10b981',
-      emoji: '🚕', plate: 'MTG-001', seats: 5, mileage: 22000
+      image:'../static/images/tvios.png', plate: 'MTG-001', seats: 5, mileage: 22000
     },
     {
       id: 'V007', tenant_id: 'T_METRO',
       brand: 'Honda', model: 'BR-V', year: 2022,
       category: 'SUV', transmission: 'CVT', fuel: 'Gasoline',
       pricePerDay: 2900, available: true, color: '#14b8a6',
-      emoji: '🚙', plate: 'MTG-002', seats: 7, mileage: 41000
+      image:'../static/images/hbr-v.png', plate: 'MTG-002', seats: 7, mileage: 41000
     },
     {
       id: 'V008', tenant_id: 'T_METRO',
       brand: 'Suzuki', model: 'Ertiga', year: 2023,
       category: 'Van', transmission: 'Automatic', fuel: 'Gasoline',
       pricePerDay: 2600, available: false, color: '#0ea5e9',
-      emoji: '🚌', plate: 'MTG-003', seats: 7, mileage: 15700
+      image:'../static/images/sertiga.png', plate: 'MTG-003', seats: 7, mileage: 15700
     },
     {
       id: 'V009', tenant_id: 'T_METRO',
       brand: 'Geely', model: 'Coolray', year: 2024,
       category: 'SUV', transmission: 'DCT', fuel: 'Gasoline',
       pricePerDay: 3100, available: true, color: '#6366f1',
-      emoji: '🏎️', plate: 'MTG-004', seats: 5, mileage: 8900
+      image:'../static/images/gcoolray.png', plate: 'MTG-004', seats: 5, mileage: 8900
     }
   ],
 
@@ -314,26 +362,26 @@ const Session = {
   ADMIN_SECRET_KEY: 'DX-ADMIN-9F2A',
 
   set(data) {
-    sessionStorage.setItem('drivex_session', JSON.stringify(data));
+    sessionStorage.setItem('drivelink_session', JSON.stringify(data));
   },
 
   get() {
     try {
-      return JSON.parse(sessionStorage.getItem('drivex_session')) || null;
+      return JSON.parse(sessionStorage.getItem('drivelink_session')) || null;
     } catch { return null; }
   },
 
   clear() {
-    sessionStorage.removeItem('drivex_session');
-    sessionStorage.removeItem('drivex_admin_key');
+    sessionStorage.removeItem('drivelink_session');
+    sessionStorage.removeItem('drivelink_admin_key');
   },
 
   setAdminKey(key) {
-    sessionStorage.setItem('drivex_admin_key', key);
+    sessionStorage.setItem('drivelink_admin_key', key);
   },
 
   getAdminKey() {
-    return sessionStorage.getItem('drivex_admin_key');
+    return sessionStorage.getItem('drivelink_admin_key');
   },
 
   isLoggedIn() { return this.get() !== null; },
@@ -612,88 +660,85 @@ const UI = {
 // ─────────────────────────────────────────────
 
 function initLoginPage() {
-  // Already logged in? Redirect
+
   const session = Session.get();
+
   if (session) {
-    if (session.role === 'renter') window.location.href = 'index.html';
-    else if (session.role === 'super_admin') window.location.href = 'admin.html';
-    else window.location.href = 'portal.html';
-    return;
-  }
 
-  const form     = document.getElementById('loginForm');
-  const errorEl  = document.getElementById('loginError');
-  const tenantEl = document.getElementById('tenantKey');
-  const emailEl  = document.getElementById('email');
-  const passEl   = document.getElementById('password');
-  const btnEl    = document.getElementById('loginBtn');
-  const challengeOverlay = document.getElementById('adminChallenge');
-  const challengeInput   = document.getElementById('adminKeyInput');
-  const challengeBtn     = document.getElementById('verifyAdminBtn');
-  const challengeError   = document.getElementById('challengeError');
-
-  if (!form) return;
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    UI.clearError(errorEl);
-
-    const email = emailEl.value.trim();
-    const password = passEl.value.trim();
-    const tenantKey = tenantEl.value.trim();
-
-    if (!email || !password) {
-      UI.showError(errorEl, 'Email and password are required.');
+    if (session.role === 'renter') {
+      window.location.replace('index.html');
       return;
     }
 
-    btnEl.disabled = true;
-    btnEl.textContent = 'Authenticating…';
+    if (session.role === 'super_admin') {
+      window.location.replace(
+        'admin.html?key=' + Session.ADMIN_SECRET_KEY
+      );
+      return;
+    }
 
-    setTimeout(() => {
-      const result = Auth.login(email, password, tenantKey);
+    if (
+      session.role === 'tenant_admin' ||
+      session.role === 'tenant_staff'
+    ) {
 
-      if (!result.success) {
-        UI.showError(errorEl, result.error);
-        btnEl.disabled = false;
-        btnEl.textContent = 'Sign In';
-        return;
-      }
+      window.location.replace('portal.html');
+      return;
+    }
+  }
 
-      if (result.requiresChallenge) {
-        btnEl.disabled = false;
-        btnEl.textContent = 'Sign In';
-        challengeOverlay.style.display = 'flex';
-        challengeInput.focus();
-        return;
-      }
+  const form = document.getElementById('loginForm');
 
-      window.location.href = result.redirect;
-    }, 600);
+  if (!form) return;
+
+  form.addEventListener('submit', function(e){
+
+    e.preventDefault();
+
+    const tenantKey =
+      document.getElementById('tenantKey')
+      .value.trim()
+      .toUpperCase();
+
+    const email =
+      document.getElementById('loginEmail')
+      .value.trim()
+      .toLowerCase();
+
+    const password =
+      document.getElementById('loginPassword')
+      .value.trim();
+
+    
+
+    const result =
+      Auth.login(email,password,tenantKey);
+
+    if(!result.success){
+      alert(result.error);
+      return;
+    }
+
+    if(result.requiresChallenge){
+
+      Session.setAdminKey(
+        Session.ADMIN_SECRET_KEY
+      );
+
+      window.location.replace(
+        'admin.html?key=' +
+        Session.ADMIN_SECRET_KEY
+      );
+
+      return;
+    }
+
+    window.location.replace(
+      result.redirect
+    );
+
   });
 
-  // Admin key challenge
-  if (challengeBtn) {
-    challengeBtn.addEventListener('click', function() {
-      UI.clearError(challengeError);
-      const key = challengeInput.value.trim();
-      if (!key) { UI.showError(challengeError, 'Please enter the Admin Access Key.'); return; }
-
-      if (Auth.verifyAdminKey(key)) {
-        window.location.href = 'admin.html?key=' + key;
-      } else {
-        UI.showError(challengeError, 'Invalid Admin Access Key. Access denied.');
-        challengeInput.value = '';
-        challengeInput.focus();
-      }
-    });
-  }
-
-  if (challengeInput) {
-    challengeInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') challengeBtn.click();
-    });
-  }
 }
 
 // ─────────────────────────────────────────────
@@ -734,6 +779,7 @@ function initIndexPage() {
           window.location.href = 'login.html';
         } else {
           renderAccountView(session);
+          loadProfile();
         }
       }
     });
@@ -749,50 +795,97 @@ function renderMarketplace(filters = {}) {
   if (!grid) return;
 
   const vehicles = DataStore.getVehicles(null, filters);
-  grid.innerHTML = '';
 
-  if (!vehicles.length) {
-    grid.innerHTML = `<div class="animate-fade-in" style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--clr-text-3)">
-      <div style="font-size:3rem;margin-bottom:1rem">🔍</div>
-      <p>No vehicles match your filters.</p>
-    </div>`;
+  grid.innerHTML='';
+
+  if(!vehicles.length){
+    grid.innerHTML=`
+      <div style="
+      grid-column:1/-1;
+      text-align:center;
+      padding:4rem;">
+      No vehicles found
+      </div>
+    `;
     return;
   }
 
-  vehicles.forEach((v, i) => {
-    const tenant = DataStore.getTenantById(v.tenant_id);
-    const card = document.createElement('div');
-    card.className = 'vehicle-card animate-fade-in';
-    card.style.animationDelay = `${i * 0.07}s`;
-    card.innerHTML = `
-      <div class="vehicle-img">${v.emoji}
-        <div style="position:absolute;top:12px;right:12px">${UI.availabilityBadge(v.available)}</div>
-        <div style="position:absolute;top:12px;left:12px">
-          <span class="badge badge-neutral" style="font-size:0.68rem">${v.category}</span>
-        </div>
-      </div>
-      <div class="vehicle-body">
-        <div class="flex items-center justify-between mb-1">
-          <h4 style="font-size:1rem">${v.brand} ${v.model}</h4>
-          <span class="text-xs text-muted font-mono">${v.year}</span>
-        </div>
-        <p class="text-xs text-muted mb-3">${tenant ? tenant.name : 'DriveX Fleet'}</p>
-        <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
-          <span class="badge badge-neutral">⚙️ ${v.transmission}</span>
-          <span class="badge badge-neutral">⛽ ${v.fuel}</span>
-          <span class="badge badge-neutral">💺 ${v.seats} seats</span>
-        </div>
-        <hr class="divider">
-        <div class="flex items-center justify-between mt-3">
-          <div class="vehicle-price">${UI.formatCurrency(v.pricePerDay)}<sub>/day</sub></div>
-          <button class="btn btn-primary btn-sm" onclick="handleBooking('${v.id}')" ${!v.available ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>
-            ${v.available ? 'Book Now' : 'Unavailable'}
-          </button>
-        </div>
-      </div>
-    `;
+  vehicles.forEach((v,i)=>{
+
+    const tenant=
+      DataStore.getTenantById(v.tenant_id);
+
+    const card=document.createElement('div');
+
+    card.className=
+      'vehicle-card animate-fade-in';
+
+    card.style.animationDelay=
+      `${i*0.07}s`;
+
+card.innerHTML=`
+
+<div class="vehicle-img">
+  <img
+    src="${v.image || '../static/images/default-car.jpg'}"
+    class="vehicle-photo"
+    alt="${v.brand} ${v.model}"
+    onerror="this.src='../static/images/default-car.jpg'">
+</div>
+
+<div class="vehicle-body">
+
+  <div class="flex items-center justify-between mb-2">
+    <span class="badge badge-neutral">
+      ${v.category}
+    </span>
+
+    ${UI.availabilityBadge(v.available)}
+  </div>
+
+  <div class="flex items-center justify-between mb-1">
+    <h4 style="font-size:1rem">
+      ${v.brand} ${v.model}
+    </h4>
+
+    <span class="text-xs text-muted font-mono">
+      ${v.year}
+    </span>
+  </div>
+
+  <p class="text-xs text-muted mb-3">
+    ${tenant ? tenant.name : 'DriveLink Fleet'}
+  </p>
+
+  <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
+    <span class="badge badge-neutral">⚙️ ${v.transmission}</span>
+    <span class="badge badge-neutral">⛽ ${v.fuel}</span>
+    <span class="badge badge-neutral">💺 ${v.seats} seats</span>
+  </div>
+
+  <hr class="divider">
+
+  <div class="flex items-center justify-between mt-3">
+    <div class="vehicle-price">
+      ${UI.formatCurrency(v.pricePerDay)}
+      <sub>/day</sub>
+    </div>
+
+    <button
+      class="btn btn-primary btn-sm"
+      onclick="handleBooking('${v.id}')"
+      ${!v.available ? 'disabled style="opacity:.4"' : ''}>
+      ${v.available ? 'Book Now' : 'Unavailable'}
+    </button>
+  </div>
+
+</div>
+`;
+
     grid.appendChild(card);
+
   });
+
 }
 
 function initFilters() {
@@ -836,76 +929,172 @@ function initFilters() {
 }
 
 function renderAccountView(session) {
-  if (!session) return;
 
-  const userBookings = DataStore.getBookings(null, session.id);
-  const userChats    = DataStore.getChats(null, session.id);
+    if(!session) return;
 
-  const bookingList = document.getElementById('myBookings');
-  const chatList    = document.getElementById('myChatList');
+    // ONLY CHATS WILL REMAIN
+    const userChats =
+    DataStore.getChats(null, session.id);
 
-  if (bookingList) {
-    bookingList.innerHTML = userBookings.length ? userBookings.map(b => {
-      const v = DataStore.getVehicleById(b.vehicle_id);
-      const t = DataStore.getTenantById(b.tenant_id);
-      return `
-        <div class="glass-card p-4 mb-3 animate-fade-in">
-          <div class="flex items-center gap-3">
-            <div style="font-size:2rem">${v ? v.emoji : '🚗'}</div>
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <h4 style="font-size:0.95rem">${v ? v.brand + ' ' + v.model : 'Vehicle'}</h4>
-                ${UI.statusBadge(b.status)}
-              </div>
-              <p class="text-xs text-muted">${t ? t.name : ''} · ${UI.formatDate(b.startDate)} → ${UI.formatDate(b.endDate)}</p>
-            </div>
-            <div class="text-right">
-              <div style="font-family:var(--font-display);font-weight:700;color:var(--clr-text)">${UI.formatCurrency(b.totalAmount)}</div>
-              <div class="text-xs text-muted">${b.totalDays} days · ${UI.statusBadge(b.paymentStatus)}</div>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('') : '<p class="text-muted text-sm">No bookings yet.</p>';
-  }
+    const chatList =
+    document.getElementById("myChatList");
 
-  if (chatList) {
-    chatList.innerHTML = '';
-    if (!userChats.length) {
-      chatList.innerHTML = '<p class="text-muted text-sm">No support conversations yet.</p>';
-      return;
+    if(!chatList) return;
+
+    chatList.innerHTML = "";
+
+    if(!userChats.length){
+
+        chatList.innerHTML = `
+        <p class="text-muted text-sm">
+        No support conversations yet.
+        </p>
+        `;
+
+        return;
     }
 
-    // Show first chat by default
+    // open first chat automatically
     renderUserChat(userChats[0].id);
 
-    userChats.forEach(chat => {
-      const tenant = DataStore.getTenantById(chat.tenant_id);
-      const lastMsg = chat.messages[chat.messages.length - 1];
-      const btn = document.createElement('div');
-      btn.className = 'chat-thread-item';
-      btn.dataset.chatId = chat.id;
-      btn.innerHTML = `
-        <div class="avatar avatar-sm" style="background:var(--clr-primary-muted);color:var(--clr-primary-light)">
-          ${UI.getInitials(tenant ? tenant.name : 'CS')}
+    userChats.forEach(chat=>{
+
+        const tenant=
+        DataStore.getTenantById(
+        chat.tenant_id
+        );
+
+        const lastMsg=
+        chat.messages[
+        chat.messages.length-1
+        ];
+
+        const btn=
+        document.createElement("div");
+
+        btn.className=
+        "chat-thread-item";
+
+        btn.dataset.chatId=
+        chat.id;
+
+        btn.innerHTML=`
+
+        <div class="avatar avatar-sm"
+        style="
+        background:var(--clr-primary-muted);
+        color:var(--clr-primary-light)">
+
+        ${UI.getInitials(
+        tenant
+        ? tenant.name
+        : "CS"
+        )}
+
         </div>
+
         <div class="flex-1 min-h-0">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-sm font-medium truncate" style="color:var(--clr-text)">${tenant ? tenant.name : 'Support'}</span>
-            <span class="text-xs text-muted">${lastMsg.time}</span>
-          </div>
-          <p class="text-xs text-muted truncate">${lastMsg.text.slice(0, 45)}…</p>
+
+            <div class="
+            flex
+            items-center
+            justify-between
+            mb-1">
+
+            <span
+            class="text-sm
+            font-medium
+            truncate"
+            style="
+            color:var(--clr-text)">
+
+            ${tenant
+            ? tenant.name
+            : "Support"}
+
+            </span>
+
+            <span
+            class="
+            text-xs
+            text-muted">
+
+            ${lastMsg.time}
+
+            </span>
+
+            </div>
+
+            <p class="
+            text-xs
+            text-muted
+            truncate">
+
+            ${lastMsg.text.slice(0,45)}...
+
+            </p>
+
         </div>
-        ${chat.unread ? `<span class="unread-badge">${chat.unread}</span>` : ''}
-      `;
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.chat-thread-item').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        renderUserChat(chat.id);
-      });
-      chatList.appendChild(btn);
+
+        ${
+        chat.unread
+        ? `<span class="unread-badge">
+           ${chat.unread}
+           </span>`
+        : ""
+        }
+
+        `;
+
+        btn.addEventListener(
+        "click",()=>{
+
+            document
+            .querySelectorAll(
+            ".chat-thread-item"
+            )
+
+            .forEach(el=>
+            el.classList.remove(
+            "active"
+            ));
+
+            btn.classList.add(
+            "active"
+            );
+
+            renderUserChat(
+            chat.id
+            );
+
+        });
+
+        chatList.appendChild(
+        btn
+        );
+
     });
-  }
+
+}
+
+
+function loadProfile(){
+
+    const session = Session.get();
+
+    if(!session) return;
+
+    document.getElementById("profileName").value =
+    session.name || "";
+
+    document.getElementById("profileEmail").value =
+    session.email || "";
+
+    document.getElementById("profilePhone").value =
+    session.phone || "";
+
+    document.getElementById("profileAddress").value =
+    session.address || "";
 }
 
 function renderUserChat(chatId) {
@@ -1055,17 +1244,62 @@ function renderPortalFleet(tenantId) {
   const vehicles = DataStore.getVehicles(tenantId);
   fleetEl.innerHTML = vehicles.map(v => `
     <div class="vehicle-card animate-fade-in">
-      <div class="vehicle-img">${v.emoji}
-        <div style="position:absolute;top:12px;right:12px">${UI.availabilityBadge(v.available)}</div>
-      </div>
-      <div class="vehicle-body">
-        <h4 class="mb-1">${v.brand} ${v.model} <span class="text-xs text-muted font-mono">${v.year}</span></h4>
-        <p class="text-xs text-muted mb-2">Plate: <span class="font-mono">${v.plate}</span> · ${v.mileage.toLocaleString()} km</p>
-        <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
-          <span class="badge badge-neutral">⚙️ ${v.transmission}</span>
-          <span class="badge badge-neutral">⛽ ${v.fuel}</span>
-          <span class="badge badge-neutral">💺 ${v.seats}</span>
-        </div>
+<div class="vehicle-img">
+
+    <img
+    src="${v.image || '../static/images/default-car.jpg'}"
+    class="vehicle-photo"
+    alt="${v.brand} ${v.model}"
+    onerror="this.src='../static/images/default-car.jpg'">
+
+    <div class="vehicle-labels">
+
+        <span class="badge badge-neutral">
+            ${v.category}
+        </span>
+
+        ${UI.availabilityBadge(v.available)}
+
+    </div>
+
+</div>
+
+<div class="vehicle-body">
+
+    <h4 class="mb-1">
+        ${v.brand} ${v.model}
+
+        <span class="text-xs text-muted font-mono">
+        ${v.year}
+        </span>
+
+    </h4>
+
+    <p class="text-xs text-muted mb-2">
+    Plate:
+    <span class="font-mono">
+    ${v.plate}
+    </span>
+
+    · ${v.mileage.toLocaleString()} km
+    </p>
+
+    <div class="flex gap-2 mb-3"
+    style="flex-wrap:wrap">
+
+        <span class="badge badge-neutral">
+        ⚙️ ${v.transmission}
+        </span>
+
+        <span class="badge badge-neutral">
+        ⛽ ${v.fuel}
+        </span>
+
+        <span class="badge badge-neutral">
+        💺 ${v.seats}
+        </span>
+
+    </div>
         <div class="vehicle-price">${UI.formatCurrency(v.pricePerDay)}<sub>/day</sub></div>
       </div>
     </div>
